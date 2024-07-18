@@ -6,19 +6,9 @@
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./lib/typescript/src/index.d.ts",
-      "import": "./lib/module/index.js",
-      "require": "./lib/commonjs/index.js"
-    }
-  },
   "scripts": {
-    "example": "yarn workspace espe-datepicker-example",
-    "test": "jest",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
-    "clean": "del-cli lib",
     "prepare": "bob build",
     "release": "release-it"
   },
@@ -31,7 +21,7 @@
     "type": "git",
     "url": "git+https://github.com/espe-org/espe-datepicker.git"
   },
-  "author": "Oleg Prokopyev <arkkeeper@yandex.ru> (https://github.com/espe-org)",
+  "author": "Salavat Iskhakov <salavat@projecto.pro> (https://github.com/espe-org)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/espe-org/espe-datepicker/issues"
@@ -42,10 +32,8 @@
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^17.0.2",
-    "@evilmartians/lefthook": "^1.5.0",
     "@react-native/eslint-config": "^0.73.1",
     "@release-it/conventional-changelog": "^5.0.0",
-    "@types/jest": "^29.5.5",
     "@types/react": "^18.2.44",
     "@types/react-native-vector-icons": "^6.4.18",
     "commitlint": "^17.0.2",
@@ -53,7 +41,6 @@
     "eslint": "^8.51.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.1",
-    "jest": "^29.7.0",
     "prettier": "^3.0.3",
     "react": "18.2.0",
     "react-native": "0.74.3",
@@ -68,17 +55,7 @@
     "react": "*",
     "react-native": "*"
   },
-  "workspaces": [
-    "example"
-  ],
   "packageManager": "yarn@3.6.1",
-  "jest": {
-    "preset": "react-native",
-    "modulePathIgnorePatterns": [
-      "<rootDir>/example/node_modules",
-      "<rootDir>/lib/"
-    ]
-  },
   "commitlint": {
     "extends": [
       "@commitlint/config-conventional"
