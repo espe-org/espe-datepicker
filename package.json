@@ -51,7 +51,7 @@
     "react": "*",
     "react-native": "*"
   },
-  "packageManager": "yarn@3.6.1",
+  "packageManager": "yarn@3.6.4",
   "commitlint": {
     "extends": [
       "@commitlint/config-conventional"
