@@ -65,6 +65,7 @@
     "@release-it/conventional-changelog": "^5.0.0",
     "@types/jest": "^29.5.5",
     "@types/react": "^18.2.44",
+    "@types/react-native-vector-icons": "^6.4.18",
     "commitlint": "^17.0.2",
     "del-cli": "^5.1.0",
     "eslint": "^8.51.0",
@@ -176,5 +177,13 @@
   "create-react-native-library": {
     "type": "library",
     "version": "0.38.2"
+  },
+  "dependencies": {
+    "@react-native-menu/menu": "^1.1.2",
+    "moment": "^2.30.1",
+    "react-native-device-info": "^11.1.0",
+    "react-native-modal": "^13.0.1",
+    "react-native-vector-icons": "^10.1.0",
+    "react-native-wheel-pick": "github:TronNatthakorn/react-native-wheel-pick#3e73a5eee7ec5934e10599d04c31587b1ff36f31"
   }
 }
