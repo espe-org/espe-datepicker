@@ -1,9 +1,10 @@
-import DeviceInfo from 'react-native-device-info';
-import Icon from 'react-native-vector-icons/Feather';
-import Modal from 'react-native-modal';
-import moment from 'moment';
-import React, { useEffect, useRef, useState } from 'react';
-import { Picker } from 'react-native-wheel-pick';
+import ActionSheet from 'espe-actionsheet'
+import DeviceInfo from 'react-native-device-info'
+import Icon from 'react-native-vector-icons/Feather'
+import Modal from 'react-native-modal'
+import moment from 'moment'
+import React, { useEffect, useRef, useState } from 'react'
+import { Picker } from 'react-native-wheel-pick'
 import {
   Text,
   TextInput,
@@ -13,7 +14,7 @@ import {
   Platform,
   Dimensions,
   Appearance,
-} from 'react-native';
+} from 'react-native'
 
 interface IDatePickerProps {
   date?: Date;
@@ -620,7 +621,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
               { flexDirection: 'row', minWidth: 110 },
             ]}
           >
-            {/* <ActionSheet
+            <ActionSheet
               forced
               actions={getMonths().map((month) => ({
                 text: month.label,
@@ -631,13 +632,15 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
               }))}
               message={Locale.getItem('Выберите месяц')}
               forceModal={AppConfig.mac}
-            > */}
-            <Text style={[styles.text, isMonthYearPicker && { fontSize: 19 }]}>
-              {capitalize(
-                currentDate.locale(Locale.getCurrentLocale()).format('MMMM '),
-              )}
-            </Text>
-            {/* </ActionSheet> */}
+              isDarkMode={AppConfig.dark}
+              mainColor={AppConfig.mainColor}
+            >
+              <Text style={[styles.text, isMonthYearPicker && { fontSize: 19 }]}>
+                {capitalize(
+                  currentDate.locale(Locale.getCurrentLocale()).format('MMMM '),
+                )}
+              </Text>
+            </ActionSheet>
           </View>
 
           <View
@@ -658,24 +661,26 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
                 style={[styles.text, isMonthYearPicker && { fontSize: 19 }]}
               />
             ) : (
-              // <ActionSheet
-              //   forced
-              //   actions={getYears().map((year) => ({
-              //     text: year.label,
-              //     onPress: () => {
-              //       currentDate.year(year.value);
-              //       onChangeCalendar();
-              //     },
-              //   }))}
-              //   message={Locale.getItem('Выберите год')}
-              //   forceModal={AppConfig.mac}
-              // >
-              <Text
-                style={[styles.text, isMonthYearPicker && { fontSize: 19 }]}
+              <ActionSheet
+                forced
+                actions={getYears().map((year) => ({
+                  text: year.label,
+                  onPress: () => {
+                    currentDate.year(year.value);
+                    onChangeCalendar();
+                  },
+                }))}
+                message={Locale.getItem('Выберите год')}
+                forceModal={AppConfig.mac}
+                isDarkMode={AppConfig.dark}
+                mainColor={AppConfig.mainColor}
               >
-                {currentDate.year()}
-              </Text>
-              // </ActionSheet>
+                <Text
+                  style={[styles.text, isMonthYearPicker && { fontSize: 19 }]}
+                >
+                  {currentDate.year()}
+                </Text>
+              </ActionSheet>
             )}
           </View>
         </View>
