@@ -298,8 +298,8 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
   const [isMonthYearPicker, setIsMonthYearPicker] = useState(false);
   const [isStartTimePicker, setIsStartTimePicker] = useState(false);
   const [isEndTimePicker, setIsEndTimePicker] = useState(false);
-  const starHourTimeTextInputRef = useRef<TextInput>(null);
-  const starMinuteTimeTextInputRef = useRef<TextInput>(null);
+  const startHourTimeTextInputRef = useRef<TextInput>(null);
+  const startMinuteTimeTextInputRef = useRef<TextInput>(null);
   const endHourTimeTextInputRef = useRef<TextInput>(null);
   const endMinuteTimeTextInputRef = useRef<TextInput>(null);
 
@@ -465,8 +465,8 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
     setStartDate(startDate.clone());
     setTimeout(() => {
       if (
-        !starHourTimeTextInputRef?.current?.isFocused() &&
-        !starMinuteTimeTextInputRef?.current?.isFocused()
+        !startHourTimeTextInputRef?.current?.isFocused() &&
+        !startMinuteTimeTextInputRef?.current?.isFocused()
       ) {
         setIsStartTimePicker(false);
       }
@@ -500,6 +500,13 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
       }, 100);
     }
   };
+
+  const forceBlur = () => {
+    if (startHourTimeTextInputRef?.current) startHourTimeTextInputRef.current.blur()
+    if (startMinuteTimeTextInputRef?.current) startMinuteTimeTextInputRef.current.blur()
+    if (endHourTimeTextInputRef?.current) endHourTimeTextInputRef.current.blur()
+    if (endMinuteTimeTextInputRef?.current) endMinuteTimeTextInputRef.current.blur()
+  }
 
   const capitalize = (string: string) =>
     string[0].toUpperCase() + string.substring(1);
@@ -538,6 +545,21 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
     }
 
     return AppConfig.plainColor;
+  };
+
+
+  const getDateBorderColor = (date, index) => {
+    if (!date || [startDate.format('DD.MM.YYYY'), endDate?.format('DD.MM.YYYY')].includes(date.format('DD.MM.YYYY'))) {
+      return AppConfig.mainColor
+    } else if (date.format('DD.MM.YYYY') === moment().format('DD.MM.YYYY')) {
+      return AppConfig.mainColor
+    } else if ([5, 6].includes(index)) {
+      return AppConfig.errorColor + 'AA'
+    } else if (date.clone().endOf('day') < minimumDate || date.clone().startOf('day') > maximumDate) {
+      return 'gray'
+    }
+
+    return AppConfig.plainColor
   };
 
   const getMonths = () => {
@@ -604,6 +626,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
           currentDate.format('MM.YYYY') !== minimumDate?.format('MM.YYYY')) ? (
           <TouchableOpacity
             onPress={() => {
+              forceBlur()
               currentDate.subtract(1, 'month');
               onChangeCalendar();
             }}
@@ -618,7 +641,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
           <View
             style={[
               styles.textWrapper,
-              { flexDirection: 'row', minWidth: 110 },
+              { flexDirection: 'row', minWidth: 120, paddingRight: 6 },
             ]}
           >
             <ActionSheet
@@ -626,11 +649,13 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
               actions={getMonths().map((month) => ({
                 text: month.label,
                 onPress: () => {
+                  forceBlur()
                   currentDate.month(month.value);
                   onChangeCalendar();
                 },
               }))}
               message={Locale.getItem('Выберите месяц')}
+              style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}
               forceModal={AppConfig.mac}
               isDarkMode={AppConfig.dark}
               mainColor={AppConfig.mainColor}
@@ -640,11 +665,12 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
                   currentDate.locale(Locale.getCurrentLocale()).format('MMMM '),
                 )}
               </Text>
+              <Icon name='chevron-down' size={18} color={AppConfig.grayColor} />
             </ActionSheet>
           </View>
 
           <View
-            style={[styles.textWrapper, { flexDirection: 'row', minWidth: 70 }]}
+            style={[styles.textWrapper, { flexDirection: 'row', minWidth: 80, paddingRight: 6 }]}
           >
             {props.useYearInput ? (
               <TextInput
@@ -666,6 +692,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
                 actions={getYears().map((year) => ({
                   text: year.label,
                   onPress: () => {
+                    forceBlur()
                     currentDate.year(year.value);
                     onChangeCalendar();
                   },
@@ -680,14 +707,16 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
                 >
                   {currentDate.year()}
                 </Text>
+                <Icon name='chevron-down' size={18} color={AppConfig.grayColor} />
               </ActionSheet>
             )}
           </View>
         </View>
       ) : !isMonthYearPicker ? (
         <TouchableOpacity
-          style={[styles.textWrapper, { width: 150 }]}
+          style={[styles.textWrapper, { width: 160, justifyContent: 'space-between', flexDirection: 'row', paddingRight: 6 }]}
           onPress={() => {
+            forceBlur()
             setIsMonthYearPicker(!isMonthYearPicker);
             setIsStartTimePicker(false);
             setIsEndTimePicker(false);
@@ -698,6 +727,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
               currentDate.locale(Locale.getCurrentLocale()).format('MMMM YYYY'),
             )}
           </Text>
+          <Icon name='chevron-down' size={18} color={AppConfig.grayColor} />
         </TouchableOpacity>
       ) : null}
 
@@ -709,6 +739,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
           currentDate.format('MM.YYYY') !== maximumDate?.format('MM.YYYY')) ? (
           <TouchableOpacity
             onPress={() => {
+              forceBlur()
               currentDate.add(1, 'month');
               onChangeCalendar();
             }}
@@ -778,16 +809,11 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
               <View
                 style={[
                   styles.dateWrapper,
-                  {
-                    backgroundColor:
-                      date &&
-                      [
-                        startDate.format('DD.MM.YYYY'),
-                        endDate?.format('DD.MM.YYYY'),
-                      ].includes(date.format('DD.MM.YYYY'))
-                        ? AppConfig.mainColor
-                        : null,
-                  },
+                    {
+                      backgroundColor: date && [startDate.format('DD.MM.YYYY'), endDate?.format('DD.MM.YYYY')].includes(date.format('DD.MM.YYYY')) ? AppConfig.mainColor : null,
+                      borderWidth: !!date && ([startDate.format('DD.MM.YYYY'), endDate?.format('DD.MM.YYYY')].includes(date.format('DD.MM.YYYY')) || date.format('DD.MM.YYYY') === moment().format('DD.MM.YYYY')) ? 2 : 0,
+                      borderColor: getDateBorderColor(date, dayIndex)
+                    },
                 ]}
               >
                 <Text
@@ -945,8 +971,8 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
     let date = startDate;
     let setDate = setStartDate;
     let setIsTimePicker = setIsStartTimePicker;
-    let hourTextInputRef = starHourTimeTextInputRef;
-    let minuteTextInputRef = starMinuteTimeTextInputRef;
+    let hourTextInputRef = startHourTimeTextInputRef;
+    let minuteTextInputRef = startMinuteTimeTextInputRef;
 
     if (isEndTime) {
       isPicker = isEndTimePicker;
