@@ -855,8 +855,8 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
           itemStyle={{ color: AppConfig.plainColor }}
           selectedValue={currentDate.year()}
           pickerData={years}
-          onValueChange={(value) => {
-            currentDate.year(value);
+          onValueChange={(year) => {
+            currentDate.year(year);
             onChangeCalendar();
           }}
         />
@@ -1119,6 +1119,12 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
             style={styles.buttonWrapper}
             onPress={() => {
               onChangeCalendar();
+              if (!props.withEndDate) {
+                startDate.set({
+                  month: currentDate.month(),
+                  year: currentDate.year(),
+                });
+              }
               onBlurTime();
               onConfirm(startDate.toDate(), endDate?.toDate());
             }}
