@@ -54,7 +54,7 @@
     }
   },
   "dependencies": {
-    "espe-actionsheet": "https://github.com/espe-org/espe-datepicker.git",
+    "espe-actionsheet": "https://github.com/espe-org/espe-actionsheet.git",
     "moment": "2.30.1",
     "react-native-device-info": "11.1.0",
     "react-native-modal": "13.0.1",
