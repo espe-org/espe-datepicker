@@ -698,6 +698,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
                   },
                 }))}
                 message={Locale.getItem('Выберите год')}
+                style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}
                 forceModal={AppConfig.mac}
                 isDarkMode={AppConfig.dark}
                 mainColor={AppConfig.mainColor}
