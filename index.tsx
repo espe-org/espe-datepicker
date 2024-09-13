@@ -132,7 +132,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
         width: AppConfig.isPad
           ? 380
           : Math.min(AppConfig.windowWidth, AppConfig.windowHeight, 440) -
-            (AppConfig.isPad ? 85 : 30),
+          (AppConfig.isPad ? 85 : 30),
         margin: 10,
         marginBottom:
           AppConfig.hasNotch || AppConfig.isPad || AppConfig.android ? 24 : 0,
@@ -597,8 +597,8 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
     let maxYear = maximumDate.year();
 
     if (AppConfig.mac) {
-      minYear = currentDate.year() - 5;
-      maxYear = currentDate.year() + 5;
+      minYear = 1900 // currentDate.year() - 5;
+      maxYear = 2100 // currentDate.year() + 5;
     }
 
     if (minYear < minimumDate?.year()) {
@@ -620,10 +620,10 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
     <View style={styles.headerContainer}>
       <View style={{ flex: 1 }}>
         {AppConfig.mac ||
-        (!isMonthYearPicker &&
-          !isStartTimePicker &&
-          !isEndTimePicker &&
-          currentDate.format('MM.YYYY') !== minimumDate?.format('MM.YYYY')) ? (
+          (!isMonthYearPicker &&
+            !isStartTimePicker &&
+            !isEndTimePicker &&
+            currentDate.format('MM.YYYY') !== minimumDate?.format('MM.YYYY')) ? (
           <TouchableOpacity
             onPress={() => {
               forceBlur()
@@ -656,7 +656,8 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
               }))}
               message={Locale.getItem('Выберите месяц')}
               style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}
-              forceModal={AppConfig.mac}
+              forceModal
+              classicMode
               isDarkMode={AppConfig.dark}
               mainColor={AppConfig.mainColor}
             >
@@ -699,7 +700,9 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
                 }))}
                 message={Locale.getItem('Выберите год')}
                 style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}
-                forceModal={AppConfig.mac}
+                forceModal
+                classicMode
+                scrollToIndex={124}
                 isDarkMode={AppConfig.dark}
                 mainColor={AppConfig.mainColor}
               >
@@ -734,10 +737,10 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
 
       <View style={{ flex: 1, alignItems: 'flex-end' }}>
         {AppConfig.mac ||
-        (!isMonthYearPicker &&
-          !isStartTimePicker &&
-          !isEndTimePicker &&
-          currentDate.format('MM.YYYY') !== maximumDate?.format('MM.YYYY')) ? (
+          (!isMonthYearPicker &&
+            !isStartTimePicker &&
+            !isEndTimePicker &&
+            currentDate.format('MM.YYYY') !== maximumDate?.format('MM.YYYY')) ? (
           <TouchableOpacity
             onPress={() => {
               forceBlur()
@@ -766,9 +769,9 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
               style={[
                 styles.dateBtn,
                 startDate.format('DD.MM.YYYY') === date?.format('DD.MM.YYYY') &&
-                  styles.firstSelectedDate,
+                styles.firstSelectedDate,
                 endDate?.format('DD.MM.YYYY') === date?.format('DD.MM.YYYY') &&
-                  styles.lastSelectedDate,
+                styles.lastSelectedDate,
                 { backgroundColor: getDateBGColor(date) },
               ]}
               disabled={
@@ -810,11 +813,11 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
               <View
                 style={[
                   styles.dateWrapper,
-                    {
-                      backgroundColor: date && [startDate.format('DD.MM.YYYY'), endDate?.format('DD.MM.YYYY')].includes(date.format('DD.MM.YYYY')) ? AppConfig.mainColor : null,
-                      borderWidth: !!date && ([startDate.format('DD.MM.YYYY'), endDate?.format('DD.MM.YYYY')].includes(date.format('DD.MM.YYYY')) || date.format('DD.MM.YYYY') === moment().format('DD.MM.YYYY')) ? 2 : 0,
-                      borderColor: getDateBorderColor(date, dayIndex)
-                    },
+                  {
+                    backgroundColor: date && [startDate.format('DD.MM.YYYY'), endDate?.format('DD.MM.YYYY')].includes(date.format('DD.MM.YYYY')) ? AppConfig.mainColor : null,
+                    borderWidth: !!date && ([startDate.format('DD.MM.YYYY'), endDate?.format('DD.MM.YYYY')].includes(date.format('DD.MM.YYYY')) || date.format('DD.MM.YYYY') === moment().format('DD.MM.YYYY')) ? 2 : 0,
+                    borderColor: getDateBorderColor(date, dayIndex)
+                  },
                 ]}
               >
                 <Text
@@ -1102,7 +1105,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
   const renderButtons = () => (
     <View style={styles.buttonsContainer}>
       {!AppConfig.mac &&
-      (isMonthYearPicker || isStartTimePicker || isEndTimePicker) ? (
+        (isMonthYearPicker || isStartTimePicker || isEndTimePicker) ? (
         <>
           <TouchableOpacity
             style={styles.buttonWrapper}
@@ -1163,7 +1166,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
     <>
       {props.children && props.children(showPicker)}
       {(AppConfig.mac && props.mode === 'time') ||
-      minimumDate > maximumDate ? null : (
+        minimumDate > maximumDate ? null : (
         <Modal
           animationIn="slideInUp"
           animationOut="slideOutDown"
@@ -1180,7 +1183,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
                 {renderHeader()}
 
                 {AppConfig.mac ||
-                (!isMonthYearPicker && !isStartTimePicker && !isEndTimePicker)
+                  (!isMonthYearPicker && !isStartTimePicker && !isEndTimePicker)
                   ? renderCalendar()
                   : null}
 
@@ -1191,9 +1194,9 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
             ) : null}
 
             {!AppConfig.mac &&
-            ((mode === 'time' && !props.withEndDate) ||
-              isStartTimePicker ||
-              isEndTimePicker)
+              ((mode === 'time' && !props.withEndDate) ||
+                isStartTimePicker ||
+                isEndTimePicker)
               ? renderTimePicker()
               : null}
 
