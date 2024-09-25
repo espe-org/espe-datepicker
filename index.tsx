@@ -67,7 +67,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
         'окончание': 'end',
         'OK': 'OK',
         'Отмена': 'Cancel',
-        'Назад': 'Ago',
+        'Назад': 'Back',
       },
       ru: {},
     } as Record<string, Record<string, string>>,
