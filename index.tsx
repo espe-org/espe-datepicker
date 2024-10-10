@@ -649,6 +649,12 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
               actions={getMonths().map((month) => ({
                 text: month.label,
                 onPress: () => {
+                  if (!props.withEndDate) {
+                    startDate.set({
+                      month: currentDate.month(),
+                      year: currentDate.year(),
+                    });
+                  }
                   forceBlur()
                   currentDate.month(month.value);
                   onChangeCalendar();
@@ -693,6 +699,12 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
                 actions={getYears().map((year) => ({
                   text: year.label,
                   onPress: () => {
+                    if (!props.withEndDate) {
+                      startDate.set({
+                        month: currentDate.month(),
+                        year: currentDate.year(),
+                      });
+                    }
                     forceBlur()
                     currentDate.year(year.value);
                     onChangeCalendar();
