@@ -622,180 +622,184 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
     return years;
   };
 
-  const renderHeader = () => (
-    <View style={styles.headerContainer}>
-      <View style={{ flex: 1 }}>
-        {AppConfig.mac ||
-          (!isMonthYearPicker &&
-            !isStartTimePicker &&
-            !isEndTimePicker &&
-            currentDate.format('MM.YYYY') !== minimumDate?.format('MM.YYYY')) ? (
-          <TouchableOpacity
-            onPress={() => {
-              forceBlur()
-              currentDate.subtract(1, 'month');
-              onChangeCalendar();
-              if (!props.withEndDate) {
-                startDate.set({
-                  month: currentDate.month(),
-                  year: currentDate.year(),
-                });
-              }
-              onBlur()
-            }}
-          >
-            <Icon name="chevron-left" size={24} color={AppConfig.mainColor} />
-          </TouchableOpacity>
-        ) : null}
-      </View>
+  const renderHeader = () => {
+    const years = getYears()
 
-      {AppConfig.mac ? (
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <View
-            style={[
-              styles.textWrapper,
-              { flexDirection: 'row', minWidth: 120, paddingRight: 6 },
-            ]}
-          >
-            <ActionSheet
-              forced
-              actions={getMonths().map((month) => ({
-                text: month.label,
-                onPress: () => {
-                  forceBlur()
-                  currentDate.month(month.value);
-                  onChangeCalendar();
-                  if (!props.withEndDate) {
-                    startDate.set({
-                      month: currentDate.month(),
-                      year: currentDate.year(),
-                    });
-                  }
-                  onBlur();
-                },
-              }))}
-              message={Locale.getItem('Выберите месяц')}
-              style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}
-              forceModal
-              classicMode
-              isDarkMode={AppConfig.dark}
-              mainColor={AppConfig.mainColor}
+    return (
+      <View style={styles.headerContainer}>
+        <View style={{ flex: 1 }}>
+          {AppConfig.mac ||
+            (!isMonthYearPicker &&
+              !isStartTimePicker &&
+              !isEndTimePicker &&
+              currentDate.format('MM.YYYY') !== minimumDate?.format('MM.YYYY')) ? (
+            <TouchableOpacity
+              onPress={() => {
+                forceBlur()
+                currentDate.subtract(1, 'month');
+                onChangeCalendar();
+                if (!props.withEndDate) {
+                  startDate.set({
+                    month: currentDate.month(),
+                    year: currentDate.year(),
+                  });
+                }
+                onBlur()
+              }}
             >
-              <Text style={[styles.text, isMonthYearPicker && { fontSize: 19 }]}>
-                {capitalize(
-                  currentDate.locale(Locale.getCurrentLocale()).format('MMMM '),
-                )}
-              </Text>
-              <Icon name='chevron-down' size={18} color={AppConfig.grayColor} />
-            </ActionSheet>
-          </View>
+              <Icon name="chevron-left" size={24} color={AppConfig.mainColor} />
+            </TouchableOpacity>
+          ) : null}
+        </View>
 
-          <View
-            style={[styles.textWrapper, { flexDirection: 'row', minWidth: 80, paddingRight: 6 }]}
-          >
-            {props.useYearInput ? (
-              <TextInput
-                keyboardType="numeric"
-                value={currentDate.year().toString()}
-                selectTextOnFocus
-                onChangeText={(value) => {
-                  if (+value >= 0 && value.length <= 4) {
-                    currentDate.year(+value);
-                    setCurrentDate(currentDate.clone());
-                  }
-                }}
-                onBlur={() => {
-                  onChangeCalendar()
-                  if (!props.withEndDate) {
-                    startDate.set({
-                      month: currentDate.month(),
-                      year: currentDate.year(),
-                    });
-                  }
-                  onBlur();
-                }}
-                style={[styles.text, isMonthYearPicker && { fontSize: 19 }]}
-              />
-            ) : (
+        {AppConfig.mac ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View
+              style={[
+                styles.textWrapper,
+                { flexDirection: 'row', minWidth: 120, paddingRight: 6 },
+              ]}
+            >
               <ActionSheet
                 forced
-                actions={getYears().map((year) => ({
-                  text: year.label,
+                actions={getMonths().map((month) => ({
+                  text: month.label,
                   onPress: () => {
                     forceBlur()
-                    currentDate.year(year.value);
+                    currentDate.month(month.value);
+                    onChangeCalendar();
                     if (!props.withEndDate) {
                       startDate.set({
                         month: currentDate.month(),
                         year: currentDate.year(),
                       });
                     }
-                    onChangeCalendar();
+                    onBlur();
                   },
                 }))}
-                message={Locale.getItem('Выберите год')}
+                message={Locale.getItem('Выберите месяц')}
                 style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}
                 forceModal
                 classicMode
-                scrollToIndex={124}
                 isDarkMode={AppConfig.dark}
                 mainColor={AppConfig.mainColor}
               >
-                <Text
-                  style={[styles.text, isMonthYearPicker && { fontSize: 19 }]}
-                >
-                  {currentDate.year()}
+                <Text style={[styles.text, isMonthYearPicker && { fontSize: 19 }]}>
+                  {capitalize(
+                    currentDate.locale(Locale.getCurrentLocale()).format('MMMM '),
+                  )}
                 </Text>
                 <Icon name='chevron-down' size={18} color={AppConfig.grayColor} />
               </ActionSheet>
-            )}
-          </View>
-        </View>
-      ) : !isMonthYearPicker ? (
-        <TouchableOpacity
-          style={[styles.textWrapper, { width: 160, justifyContent: 'space-between', flexDirection: 'row', paddingRight: 6 }]}
-          onPress={() => {
-            forceBlur()
-            setIsMonthYearPicker(!isMonthYearPicker);
-            setIsStartTimePicker(false);
-            setIsEndTimePicker(false);
-          }}
-        >
-          <Text style={[styles.text, isMonthYearPicker && { fontSize: 19 }]}>
-            {capitalize(
-              currentDate.locale(Locale.getCurrentLocale()).format('MMMM YYYY'),
-            )}
-          </Text>
-          <Icon name='chevron-down' size={18} color={AppConfig.grayColor} />
-        </TouchableOpacity>
-      ) : null}
+            </View>
 
-      <View style={{ flex: 1, alignItems: 'flex-end' }}>
-        {AppConfig.mac ||
-          (!isMonthYearPicker &&
-            !isStartTimePicker &&
-            !isEndTimePicker &&
-            currentDate.format('MM.YYYY') !== maximumDate?.format('MM.YYYY')) ? (
+            <View
+              style={[styles.textWrapper, { flexDirection: 'row', minWidth: 80}, !props.useYearInput && { paddingRight: 6 }]}
+            >
+              {props.useYearInput ? (
+                <TextInput
+                  keyboardType="numeric"
+                  value={currentDate.year().toString()}
+                  selectTextOnFocus
+                  onChangeText={(value) => {
+                    if (+value >= 0 && value.length <= 4) {
+                      currentDate.year(+value);
+                      setCurrentDate(currentDate.clone());
+                    }
+                  }}
+                  onBlur={() => {
+                    onChangeCalendar()
+                    if (!props.withEndDate) {
+                      startDate.set({
+                        month: currentDate.month(),
+                        year: currentDate.year(),
+                      });
+                    }
+                    onBlur();
+                  }}
+                  style={[styles.text, isMonthYearPicker && { fontSize: 19 }]}
+                />
+              ) : (
+                <ActionSheet
+                  forced
+                  actions={years.map(year => ({
+                    text: year.label,
+                    onPress: () => {
+                      forceBlur()
+                      currentDate.year(year.value);
+                      if (!props.withEndDate) {
+                        startDate.set({
+                          month: currentDate.month(),
+                          year: currentDate.year(),
+                        });
+                      }
+                      onChangeCalendar();
+                    },
+                  }))}
+                  message={Locale.getItem('Выберите год')}
+                  style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}
+                  forceModal
+                  classicMode
+                  scrollToIndex={years.findIndex(({ value }) => value === 2024)}
+                  isDarkMode={AppConfig.dark}
+                  mainColor={AppConfig.mainColor}
+                >
+                  <Text
+                    style={[styles.text, isMonthYearPicker && { fontSize: 19 }]}
+                  >
+                    {currentDate.year()}
+                  </Text>
+                  <Icon name='chevron-down' size={18} color={AppConfig.grayColor} />
+                </ActionSheet>
+              )}
+            </View>
+          </View>
+        ) : !isMonthYearPicker ? (
           <TouchableOpacity
+            style={[styles.textWrapper, { width: 160, justifyContent: 'space-between', flexDirection: 'row', paddingRight: 6 }]}
             onPress={() => {
               forceBlur()
-              currentDate.add(1, 'month');
-              onChangeCalendar();
-              if (!props.withEndDate) {
-                startDate.set({
-                  month: currentDate.month(),
-                  year: currentDate.year(),
-                });
-              }
-              onBlur()
+              setIsMonthYearPicker(!isMonthYearPicker);
+              setIsStartTimePicker(false);
+              setIsEndTimePicker(false);
             }}
           >
-            <Icon name="chevron-right" size={24} color={AppConfig.mainColor} />
+            <Text style={[styles.text, isMonthYearPicker && { fontSize: 19 }]}>
+              {capitalize(
+                currentDate.locale(Locale.getCurrentLocale()).format('MMMM YYYY'),
+              )}
+            </Text>
+            <Icon name='chevron-down' size={18} color={AppConfig.grayColor} />
           </TouchableOpacity>
         ) : null}
+
+        <View style={{ flex: 1, alignItems: 'flex-end' }}>
+          {AppConfig.mac ||
+            (!isMonthYearPicker &&
+              !isStartTimePicker &&
+              !isEndTimePicker &&
+              currentDate.format('MM.YYYY') !== maximumDate?.format('MM.YYYY')) ? (
+            <TouchableOpacity
+              onPress={() => {
+                forceBlur()
+                currentDate.add(1, 'month');
+                onChangeCalendar();
+                if (!props.withEndDate) {
+                  startDate.set({
+                    month: currentDate.month(),
+                    year: currentDate.year(),
+                  });
+                }
+                onBlur()
+              }}
+            >
+              <Icon name="chevron-right" size={24} color={AppConfig.mainColor} />
+            </TouchableOpacity>
+          ) : null}
+        </View>
       </View>
-    </View>
-  );
+    )
+  };
 
   const renderCalendar = () => (
     <View style={styles.calendarContainer}>
