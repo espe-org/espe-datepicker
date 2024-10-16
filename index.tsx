@@ -63,11 +63,11 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
         'Время': 'Time',
         'Выберите месяц': 'Select Month',
         'Выберите год': 'Select Year',
+        'Выбрать': 'Select',
         'начало': 'beginning',
         'окончание': 'end',
         'OK': 'OK',
         'Отмена': 'Cancel',
-        'Назад': 'Back',
       },
       ru: {},
     } as Record<string, Record<string, string>>,
@@ -445,16 +445,22 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
     setCurrentDate(currentDate);
   };
 
-  const onBlurTime = () => {
+  const onBlur = () => {
     if (startDate < minimumDate) {
       startDate.set({
         hours: minimumDate.hours(),
         minutes: round(minimumDate.minutes(), minuteInterval, true),
+        date: minimumDate.date(),
+        month: minimumDate.month(),
+        year: minimumDate.year(),
       });
     } else if (startDate > maximumDate) {
       startDate.set({
         hours: maximumDate.hours(),
         minutes: round(maximumDate.minutes(), minuteInterval, false),
+        date: maximumDate.date(),
+        month: maximumDate.month(),
+        year: maximumDate.year(),
       });
     } else {
       startDate.set({
@@ -629,6 +635,13 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
               forceBlur()
               currentDate.subtract(1, 'month');
               onChangeCalendar();
+              if (!props.withEndDate) {
+                startDate.set({
+                  month: currentDate.month(),
+                  year: currentDate.year(),
+                });
+              }
+              onBlur()
             }}
           >
             <Icon name="chevron-left" size={24} color={AppConfig.mainColor} />
@@ -651,13 +664,14 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
                 onPress: () => {
                   forceBlur()
                   currentDate.month(month.value);
+                  onChangeCalendar();
                   if (!props.withEndDate) {
                     startDate.set({
                       month: currentDate.month(),
                       year: currentDate.year(),
                     });
                   }
-                  onChangeCalendar();
+                  onBlur();
                 },
               }))}
               message={Locale.getItem('Выберите месяц')}
@@ -690,7 +704,16 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
                     setCurrentDate(currentDate.clone());
                   }
                 }}
-                onBlur={onChangeCalendar}
+                onBlur={() => {
+                  onChangeCalendar()
+                  if (!props.withEndDate) {
+                    startDate.set({
+                      month: currentDate.month(),
+                      year: currentDate.year(),
+                    });
+                  }
+                  onBlur();
+                }}
                 style={[styles.text, isMonthYearPicker && { fontSize: 19 }]}
               />
             ) : (
@@ -758,6 +781,13 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
               forceBlur()
               currentDate.add(1, 'month');
               onChangeCalendar();
+              if (!props.withEndDate) {
+                startDate.set({
+                  month: currentDate.month(),
+                  year: currentDate.year(),
+                });
+              }
+              onBlur()
             }}
           >
             <Icon name="chevron-right" size={24} color={AppConfig.mainColor} />
@@ -1018,7 +1048,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
                 }
               }
             }}
-            onBlur={onBlurTime}
+            onBlur={onBlur}
             style={[styles.text, isPicker && { fontSize: 19, width: 30 }]}
           />
         </View>
@@ -1038,7 +1068,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
                 setDate(date.clone());
               }
             }}
-            onBlur={onBlurTime}
+            onBlur={onBlur}
             style={[styles.text, isPicker && { fontSize: 19, width: 30 }]}
           />
         </View>
@@ -1125,28 +1155,17 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
               setIsMonthYearPicker(false);
               setIsStartTimePicker(false);
               setIsEndTimePicker(false);
-            }}
-          >
-            <Text style={[styles.text, { color: AppConfig.mainColor }]}>
-              {Locale.getItem('Назад')}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.buttonWrapper}
-            onPress={() => {
-              onChangeCalendar();
               if (!props.withEndDate) {
                 startDate.set({
                   month: currentDate.month(),
                   year: currentDate.year(),
                 });
               }
-              onBlurTime();
-              onConfirm(startDate.toDate(), endDate?.toDate());
+              onBlur()
             }}
           >
             <Text style={[styles.text, { color: AppConfig.mainColor }]}>
-              {Locale.getItem('OK')}
+              {Locale.getItem('Выбрать')}
             </Text>
           </TouchableOpacity>
         </>
@@ -1161,7 +1180,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
           <TouchableOpacity
             style={styles.buttonWrapper}
             onPress={() => {
-              onBlurTime();
+              onBlur();
               onConfirm(startDate.toDate(), endDate?.toDate());
             }}
           >
