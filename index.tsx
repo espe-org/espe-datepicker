@@ -740,7 +740,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
                   style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}
                   forceModal
                   classicMode
-                  scrollToIndex={years.findIndex(({ value }) => value === 2024)}
+                  scrollToIndex={years.findIndex(({ value }) => value === new Date().getFullYear())}
                   isDarkMode={AppConfig.dark}
                   mainColor={AppConfig.mainColor}
                 >
