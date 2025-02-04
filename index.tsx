@@ -302,6 +302,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
   const startMinuteTimeTextInputRef = useRef<TextInput>(null);
   const endHourTimeTextInputRef = useRef<TextInput>(null);
   const endMinuteTimeTextInputRef = useRef<TextInput>(null);
+  const [firstСlickFirstDate, setFirstСlickFirstDate] = useState(!!props.withEndDate)
 
   useEffect(() => {
     if (minuteInterval !== 1) {
@@ -848,11 +849,12 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
                   });
                 }
 
-                if (props.withEndDate && !endDate && buf >= startDate) {
+                if (props.withEndDate && !endDate && buf >= startDate && !firstСlickFirstDate) {
                   setEndDate(buf);
                 } else {
                   setStartDate(buf);
                   setEndDate(null);
+                  setFirstСlickFirstDate(false);
                 }
               }}
             >
