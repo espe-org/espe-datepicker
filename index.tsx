@@ -1173,7 +1173,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = props => {
           {props.mode !== 'time' ? (
             <View style={[styles.timeContainer, { height: 64 }]}>
               <View style={{ alignItems: 'center', paddingTop: 5 }}>
-                <Text style={[styles.timeText, { marginBottom: 2 }]}>
+                <Text style={styles.timeText}>
                   {Locale.getItem('начало')}
                 </Text>
 
@@ -1200,7 +1200,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = props => {
                   setIsEndTimePicker(false)
                 }}
               >
-                <Text style={[styles.timeText, { marginBottom: 2 }]}>
+                <Text style={styles.timeText}>
                   {Locale.getItem('начало')}
                 </Text>
 
@@ -1232,7 +1232,8 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = props => {
       <View
         style={[
           styles.timeContainer,
-          { alignItems: 'center', justifyContent: 'space-between' },
+          { alignItems: 'center' },
+          mode !== 'datetime' && { justifyContent: 'center' },
         ]}
       >
         {props.mode !== 'time' ? (
