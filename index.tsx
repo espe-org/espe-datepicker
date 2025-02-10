@@ -14,6 +14,7 @@ import {
   Platform,
   Dimensions,
   Appearance,
+  Keyboard,
 } from 'react-native'
 
 interface IDatePickerProps {
@@ -36,7 +37,7 @@ interface IDatePickerProps {
   mainColor?: string;
 }
 
-const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
+const DatePicker: React.FunctionComponent<IDatePickerProps> = props => {
   const Locale = {
     weekDayNamesShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
     locale: {
@@ -72,15 +73,15 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
       ru: {},
     } as Record<string, Record<string, string>>,
     getCurrentLocale() {
-      return props.language || 'en';
+      return props.language || 'en'
     },
     getItem(text: string, strict?: boolean): string {
       if (strict) {
-        return this.locale[this.getCurrentLocale()][text];
+        return this.locale[this.getCurrentLocale()][text]
       }
-      return this.locale[this.getCurrentLocale()][text] || text;
+      return this.locale[this.getCurrentLocale()][text] || text
     },
-  };
+  }
 
   const AppConfig = {
     iOS: Platform.OS === 'ios',
@@ -88,7 +89,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
     // @ts-ignore
     mac: Platform.isMacCatalyst,
     get isPad() {
-      return this.windowWidth > 767 || this.mac;
+      return this.windowWidth > 767 || this.mac
     },
     hasNotch: DeviceInfo.hasNotch(),
     windowWidth: Dimensions.get('window').width,
@@ -99,24 +100,24 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
       max: new Date('2100'),
     },
     get mainColor() {
-      return props.mainColor || (this.dark ? '#87DC84' : '#049A00');
+      return props.mainColor || (this.dark ? '#87DC84' : '#049A00')
     },
     get errorColor() {
-      return this.dark ? '#E78080' : '#CC0000';
+      return this.dark ? '#E78080' : '#CC0000'
     },
     get plainColor() {
-      return this.dark ? 'white' : 'black';
+      return this.dark ? 'white' : 'black'
     },
     get grayColor() {
-      return this.dark ? '#BABABA' : '#999999';
+      return this.dark ? '#BABABA' : '#999999'
     },
     get borderColor() {
-      return this.dark ? '#313131' : '#DDDDDD';
+      return this.dark ? '#313131' : '#DDDDDD'
     },
     get mainBG() {
-      return this.dark ? 'black' : 'white';
+      return this.dark ? 'black' : 'white'
     },
-  };
+  }
 
   const styles = StyleSheet.create({
     get container() {
@@ -131,12 +132,12 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
         minHeight: 435,
         width: AppConfig.isPad
           ? 380
-          : Math.min(AppConfig.windowWidth, AppConfig.windowHeight, 440) -
-          (AppConfig.isPad ? 85 : 30),
+          : Math.min(AppConfig.windowWidth, AppConfig.windowHeight, 440)
+          - (AppConfig.isPad ? 85 : 30),
         margin: 10,
         marginBottom:
           AppConfig.hasNotch || AppConfig.isPad || AppConfig.android ? 24 : 0,
-      };
+      }
     },
 
     headerContainer: {
@@ -159,7 +160,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
         borderRadius: 6,
         justifyContent: 'center' as const,
         alignItems: 'center' as const,
-      };
+      }
     },
 
     get text() {
@@ -168,7 +169,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
         fontFamily: 'TTNorms-Medium',
         fontSize: 16,
         textAlign: 'center' as const,
-      };
+      }
     },
 
     calendarContainer: {
@@ -186,7 +187,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
         color: AppConfig.grayColor,
         fontFamily: 'TTNorms-Regular',
         marginBottom: 4,
-      };
+      }
     },
 
     dateBtn: {
@@ -227,7 +228,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
         borderTopWidth: 1,
         borderColor: AppConfig.borderColor,
         paddingHorizontal: 24,
-      };
+      }
     },
 
     get timeText() {
@@ -235,7 +236,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
         color: AppConfig.grayColor,
         fontFamily: 'TTNorms-Medium',
         fontSize: 12,
-      };
+      }
     },
 
     get buttonsContainer() {
@@ -244,7 +245,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
         borderTopWidth: 1,
         borderColor: AppConfig.borderColor,
         width: 'auto' as const,
-      };
+      }
     },
 
     get buttonWrapper() {
@@ -255,54 +256,58 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
         alignItems: 'center' as const,
         borderLeftWidth: 0.5,
         borderColor: AppConfig.borderColor,
-      };
+      }
     },
-  });
+  })
 
-  const mode = props.mode || 'date';
+  const mode = props.mode || 'date'
   const minimumDate = props.minimumDate
     ? moment(props.minimumDate)
-    : moment(AppConfig.date_limits.min);
+    : moment(AppConfig.date_limits.min)
   const maximumDate = props.maximumDate
     ? moment(props.maximumDate)
-    : moment(AppConfig.date_limits.max);
-  const minuteInterval = props.noInterval ? 1 : props.minuteInterval || 5;
-  const [isVisible, setIsVisible] = useState(false);
+    : moment(AppConfig.date_limits.max)
+  const minuteInterval = props.noInterval ? 1 : props.minuteInterval || 5
+  const [isVisible, setIsVisible] = useState(false)
   const [currentDate, setCurrentDate] = useState(() => {
-    let date = props.date ? moment(props.date) : moment();
+    let date = props.date ? moment(props.date) : moment()
 
     if (date < minimumDate) {
-      date = minimumDate.clone();
+      date = minimumDate.clone()
     } else if (date > maximumDate) {
-      date = maximumDate.clone();
+      date = maximumDate.clone()
     }
 
-    return date;
-  });
-  const [startDate, setStartDate] = useState(currentDate.clone());
+    return date
+  })
+  const [startDate, setStartDate] = useState(currentDate.clone())
   const [endDate, setEndDate] = useState(() => {
-    let date =
-      props.endDate && props.withEndDate ? moment(props.endDate) : null;
+    let date = props.endDate && props.withEndDate ? moment(props.endDate) : null
 
     if (date) {
       if (date < startDate) {
-        date = startDate.clone();
+        date = startDate.clone()
       } else if (date > maximumDate) {
-        date = maximumDate.clone();
+        date = maximumDate.clone()
       }
     }
 
-    return date;
-  });
-  const [days, setDays] = useState([]);
-  const [isMonthYearPicker, setIsMonthYearPicker] = useState(false);
-  const [isStartTimePicker, setIsStartTimePicker] = useState(false);
-  const [isEndTimePicker, setIsEndTimePicker] = useState(false);
-  const startHourTimeTextInputRef = useRef<TextInput>(null);
-  const startMinuteTimeTextInputRef = useRef<TextInput>(null);
-  const endHourTimeTextInputRef = useRef<TextInput>(null);
-  const endMinuteTimeTextInputRef = useRef<TextInput>(null);
+    return date
+  })
+  const [days, setDays] = useState([])
+  const [isMonthYearPicker, setIsMonthYearPicker] = useState(false)
+  const [isStartTimePicker, setIsStartTimePicker] = useState(false)
+  const [isEndTimePicker, setIsEndTimePicker] = useState(false)
+  const [startDateInput, setStartDateInput] = useState('')
+  const [endDateInput, setEndDateInput] = useState('')
+  const startDateTimeTextInputRef = useRef<TextInput>(null)
+  const endDateTimeTextInputRef = useRef<TextInput>(null)
+  const startHourTimeTextInputRef = useRef<TextInput>(null)
+  const startMinuteTimeTextInputRef = useRef<TextInput>(null)
+  const endHourTimeTextInputRef = useRef<TextInput>(null)
+  const endMinuteTimeTextInputRef = useRef<TextInput>(null)
   const [firstСlickFirstDate, setFirstСlickFirstDate] = useState(!!props.withEndDate)
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false)
 
   useEffect(() => {
     if (minuteInterval !== 1) {
@@ -312,8 +317,8 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
           minuteInterval,
           startDate.format('DD.MM.YYYY') === minimumDate?.format('DD.MM.YYYY'),
         ),
-      );
-      setStartDate(startDate);
+      )
+      setStartDate(startDate)
 
       if (endDate && props.withEndDate) {
         endDate.minutes(
@@ -322,91 +327,113 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
             minuteInterval,
             endDate.format('DD.MM.YYYY') === minimumDate?.format('DD.MM.YYYY'),
           ),
-        );
-        setEndDate(endDate);
+        )
+        setEndDate(endDate)
       }
     }
 
     if (['date', 'datetime'].includes(mode)) {
-      onChangeCalendar();
+      onChangeCalendar()
     } else if (mode === 'time' && props.withEndDate) {
-      setEndDate(startDate.clone());
+      setEndDate(startDate.clone())
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [])
 
   useEffect(() => {
     if (props.isVisible) {
-      showPicker();
+      showPicker()
     }
-  }, [props.isVisible]);
+  }, [props.isVisible])
+
+  useEffect(() => {
+    setStartDateInput(startDate.format('DD.MM.YY'))
+  }, [startDate])
+
+  useEffect(() => {
+    if (endDate) {
+      setEndDateInput(endDate?.format('DD.MM.YY'))
+    }
+  }, [endDate])
 
   useEffect(() => {
     if (startDate < minimumDate) {
-      setStartDate(minimumDate.clone());
+      setStartDate(minimumDate.clone())
     } else if (startDate > maximumDate) {
-      setStartDate(maximumDate.clone());
+      setStartDate(maximumDate.clone())
     }
 
     if (endDate) {
       if (endDate < startDate) {
-        setEndDate(startDate.clone());
+        setEndDate(startDate.clone())
       } else if (endDate > maximumDate) {
-        setEndDate(maximumDate.clone());
+        setEndDate(maximumDate.clone())
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.minimumDate, props.maximumDate]);
+  }, [props.minimumDate, props.maximumDate])
 
   useEffect(() => {
     if (props.onDateChange) {
       if (props.withEndDate && endDate) {
-        props.onDateChange(startDate.toDate(), endDate.toDate());
+        props.onDateChange(startDate.toDate(), endDate.toDate())
       } else {
-        props.onDateChange(startDate.toDate());
+        props.onDateChange(startDate.toDate())
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startDate, endDate]);
+  }, [startDate, endDate])
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () =>
+      setIsKeyboardOpen(true))
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () =>
+      setIsKeyboardOpen(false))
+
+    return () => {
+      keyboardDidShowListener.remove()
+      keyboardDidHideListener.remove()
+    }
+  }, [])
 
   const round = (number: number, interval: number, isCeil: boolean) => {
-    const remainder = number % interval;
-    number -= remainder;
+    const remainder = number % interval
+    number -= remainder
 
     if (remainder !== 0 && isCeil) {
-      number += interval;
+      number += interval
     }
 
-    return number;
-  };
+    return number
+  }
 
   const showPicker = () => {
-    setIsVisible(() => true);
-  };
+    setIsVisible(() => true)
+  }
 
   const hidePicker = () => {
-    setIsVisible(false);
-    setIsMonthYearPicker(false);
-    setIsStartTimePicker(false);
-    setIsEndTimePicker(false);
-  };
+    setIsVisible(false)
+    setIsMonthYearPicker(false)
+    setIsStartTimePicker(false)
+    setIsEndTimePicker(false)
+  }
 
   const onConfirm = (date: Date, endDate?: Date) => {
-    hidePicker();
+    hidePicker()
 
     if (props.withEndDate && endDate) {
-      props.onConfirm(date, endDate);
+      props.onConfirm(date, endDate)
     } else {
-      props.onConfirm(date);
+      props.onConfirm(date)
     }
-  };
+  }
 
   const onCancel = () => {
-    hidePicker();
+    hidePicker()
     if (props.onCancel) {
-      props.onCancel();
+      props.onCancel()
     }
-  };
+  }
 
   const onChangeCalendar = () => {
     if (minimumDate > currentDate) {
@@ -414,7 +441,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
         date: minimumDate.date(),
         month: minimumDate.month(),
         year: minimumDate.year(),
-      });
+      })
     }
 
     if (maximumDate < currentDate) {
@@ -422,29 +449,29 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
         date: maximumDate.date(),
         month: maximumDate.month(),
         year: maximumDate.year(),
-      });
+      })
     }
 
-    const days = Locale.weekDayNamesShort.map((name) => ({ name, dates: [] }));
-    const firstDate = currentDate.clone().startOf('month');
-    const lastDate = currentDate.clone().endOf('month');
+    const days = Locale.weekDayNamesShort.map(name => ({ name, dates: [] }))
+    const firstDate = currentDate.clone().startOf('month')
+    const lastDate = currentDate.clone().endOf('month')
 
     do {
-      days[firstDate.day()].dates.push(firstDate.clone());
-      firstDate.add(1, 'day');
-    } while (firstDate <= lastDate);
+      days[firstDate.day()].dates.push(firstDate.clone())
+      firstDate.add(1, 'day')
+    } while (firstDate <= lastDate)
 
     // Воскресенье переносится в конец недели
-    days.push(days[0]);
-    days.shift();
+    days.push(days[0])
+    days.shift()
 
     for (let i = 0; i < days.length - 1 && days[i].dates[0].date() !== 1; i++) {
-      days[i].dates.unshift(null);
+      days[i].dates.unshift(null)
     }
 
-    setDays(days);
-    setCurrentDate(currentDate);
-  };
+    setDays(days)
+    setCurrentDate(currentDate)
+  }
 
   const onBlur = () => {
     if (startDate < minimumDate) {
@@ -454,7 +481,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
         date: minimumDate.date(),
         month: minimumDate.month(),
         year: minimumDate.year(),
-      });
+      })
     } else if (startDate > maximumDate) {
       startDate.set({
         hours: maximumDate.hours(),
@@ -462,53 +489,46 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
         date: maximumDate.date(),
         month: maximumDate.month(),
         year: maximumDate.year(),
-      });
+      })
     } else {
       startDate.set({
         minutes: round(startDate.minutes(), minuteInterval, true),
-      });
+      })
     }
 
-    setStartDate(startDate.clone());
+    setStartDate(startDate.clone())
     setTimeout(() => {
       if (
-        !startHourTimeTextInputRef?.current?.isFocused() &&
-        !startMinuteTimeTextInputRef?.current?.isFocused()
+        !startHourTimeTextInputRef?.current?.isFocused()
+        && !startMinuteTimeTextInputRef?.current?.isFocused()
       ) {
-        setIsStartTimePicker(false);
+        setIsStartTimePicker(false)
       }
-    }, 100);
+    }, 100)
 
     if (props.withEndDate && endDate) {
       if (endDate < startDate) {
-        endDate.set({
-          hours: startDate.hour(),
-          minutes: startDate.minutes(),
-        });
+        setEndDate(startDate.clone())
       } else if (endDate > maximumDate) {
-        endDate.set({
-          hours: maximumDate.hours(),
-          minutes: round(maximumDate.minutes(), minuteInterval, false),
-        });
+        setEndDate(maximumDate.clone().minutes(round(maximumDate.minutes(), minuteInterval, false)))
       } else {
-        endDate.set({
-          minutes: round(endDate.minutes(), minuteInterval, false),
-        });
+        setEndDate(endDate.clone().minutes(round(endDate.minutes(), minuteInterval, false)))
       }
 
-      setEndDate(endDate.clone());
       setTimeout(() => {
         if (
-          !endHourTimeTextInputRef?.current?.isFocused() &&
-          !endMinuteTimeTextInputRef?.current?.isFocused()
+          !endHourTimeTextInputRef?.current?.isFocused()
+          && !endMinuteTimeTextInputRef?.current?.isFocused()
         ) {
-          setIsEndTimePicker(false);
+          setIsEndTimePicker(false)
         }
-      }, 100);
+      }, 100)
     }
-  };
+  }
 
   const forceBlur = () => {
+    if (startDateTimeTextInputRef?.current) startDateTimeTextInputRef.current.blur()
+    if (endDateTimeTextInputRef?.current) endDateTimeTextInputRef.current.blur()
     if (startHourTimeTextInputRef?.current) startHourTimeTextInputRef.current.blur()
     if (startMinuteTimeTextInputRef?.current) startMinuteTimeTextInputRef.current.blur()
     if (endHourTimeTextInputRef?.current) endHourTimeTextInputRef.current.blur()
@@ -516,44 +536,43 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
   }
 
   const capitalize = (string: string) =>
-    string[0].toUpperCase() + string.substring(1);
+    string[0].toUpperCase() + string.substring(1)
 
-  const getDateBGColor = (date) => {
+  const getDateBGColor = date => {
     if (!date) {
-      return undefined;
+      return undefined
     } else if (
-      endDate &&
-      date.clone().endOf('day') >= startDate &&
-      date.clone().startOf('day') <= endDate
+      endDate
+      && date.clone().endOf('day') >= startDate
+      && date.clone().startOf('day') <= endDate
     ) {
-      return AppConfig.mainColor + '44';
+      return AppConfig.mainColor + '44'
     }
 
-    return undefined;
-  };
+    return undefined
+  }
 
   const getDateTextColor = (date, index) => {
     if (
-      !date ||
-      [startDate.format('DD.MM.YYYY'), endDate?.format('DD.MM.YYYY')].includes(
+      !date
+      || [startDate.format('DD.MM.YYYY'), endDate?.format('DD.MM.YYYY')].includes(
         date.format('DD.MM.YYYY'),
       )
     ) {
-      return 'white';
+      return 'white'
     } else if (date.format('DD.MM.YYYY') === moment().format('DD.MM.YYYY')) {
-      return AppConfig.mainColor;
+      return AppConfig.mainColor
     } else if ([5, 6].includes(index)) {
-      return AppConfig.errorColor + 'AA';
+      return AppConfig.errorColor + 'AA'
     } else if (
-      date.clone().endOf('day') < minimumDate ||
-      date.clone().startOf('day') > maximumDate
+      date.clone().endOf('day') < minimumDate
+      || date.clone().startOf('day') > maximumDate
     ) {
-      return 'gray';
+      return 'gray'
     }
 
-    return AppConfig.plainColor;
-  };
-
+    return AppConfig.plainColor
+  }
 
   const getDateBorderColor = (date, index) => {
     if (!date || [startDate.format('DD.MM.YYYY'), endDate?.format('DD.MM.YYYY')].includes(date.format('DD.MM.YYYY'))) {
@@ -567,7 +586,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
     }
 
     return AppConfig.plainColor
-  };
+  }
 
   const getMonths = () => {
     return [
@@ -586,22 +605,22 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
     ].reduce((arr, value, index) => {
       if (
         !(
-          (currentDate.year() === minimumDate?.year() &&
-            index < minimumDate.month()) ||
-          (currentDate.year() === maximumDate?.year() &&
-            index > maximumDate.month())
+          (currentDate.year() === minimumDate?.year()
+            && index < minimumDate.month())
+          || (currentDate.year() === maximumDate?.year()
+            && index > maximumDate.month())
         )
       ) {
-        arr.push({ value: index, label: Locale.getItem(value) });
+        arr.push({ value: index, label: Locale.getItem(value) })
       }
-      return arr;
-    }, []);
-  };
+      return arr
+    }, [])
+  }
 
   const getYears = () => {
-    const years = [];
-    let minYear = minimumDate.year();
-    let maxYear = maximumDate.year();
+    const years = []
+    let minYear = minimumDate.year()
+    let maxYear = maximumDate.year()
 
     if (AppConfig.mac) {
       minYear = 1900 // currentDate.year() - 5;
@@ -609,19 +628,19 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
     }
 
     if (minYear < minimumDate?.year()) {
-      minYear = minimumDate.year();
+      minYear = minimumDate.year()
     }
 
     if (maxYear > maximumDate?.year()) {
-      maxYear = maximumDate.year();
+      maxYear = maximumDate.year()
     }
 
     for (let year = minYear; year <= maxYear; year++) {
-      years.push({ value: year, label: year.toString() });
+      years.push({ value: year, label: year.toString() })
     }
 
-    return years;
-  };
+    return years
+  }
 
   const renderHeader = () => {
     const years = getYears()
@@ -629,28 +648,28 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
     return (
       <View style={styles.headerContainer}>
         <View style={{ flex: 1 }}>
-          {AppConfig.mac ||
-            (!isMonthYearPicker &&
-              !isStartTimePicker &&
-              !isEndTimePicker &&
-              currentDate.format('MM.YYYY') !== minimumDate?.format('MM.YYYY')) ? (
-            <TouchableOpacity
-              onPress={() => {
-                forceBlur()
-                currentDate.subtract(1, 'month');
-                onChangeCalendar();
-                if (!props.withEndDate) {
-                  startDate.set({
-                    month: currentDate.month(),
-                    year: currentDate.year(),
-                  });
-                }
-                onBlur()
-              }}
-            >
-              <Icon name="chevron-left" size={24} color={AppConfig.mainColor} />
-            </TouchableOpacity>
-          ) : null}
+          {AppConfig.mac
+            || (!isMonthYearPicker
+              && !isStartTimePicker
+              && !isEndTimePicker
+              && currentDate.format('MM.YYYY') !== minimumDate?.format('MM.YYYY')) ? (
+                <TouchableOpacity
+                onPress={() => {
+                  forceBlur()
+                  currentDate.subtract(1, 'month')
+                  onChangeCalendar()
+                  if (!props.withEndDate) {
+                    startDate.set({
+                      month: currentDate.month(),
+                      year: currentDate.year(),
+                    })
+                  }
+                  onBlur()
+                  }}
+              >
+                <Icon name='chevron-left' size={24} color={AppConfig.mainColor} />
+              </TouchableOpacity>
+            ) : null}
         </View>
 
         {AppConfig.mac ? (
@@ -663,19 +682,19 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
             >
               <ActionSheet
                 forced
-                actions={getMonths().map((month) => ({
+                actions={getMonths().map(month => ({
                   text: month.label,
                   onPress: () => {
                     forceBlur()
-                    currentDate.month(month.value);
-                    onChangeCalendar();
+                    currentDate.month(month.value)
+                    onChangeCalendar()
                     if (!props.withEndDate) {
                       startDate.set({
                         month: currentDate.month(),
                         year: currentDate.year(),
-                      });
+                      })
                     }
-                    onBlur();
+                    onBlur()
                   },
                 }))}
                 message={Locale.getItem('Выберите месяц')}
@@ -695,17 +714,17 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
             </View>
 
             <View
-              style={[styles.textWrapper, { flexDirection: 'row', minWidth: 80}, !props.useYearInput && { paddingRight: 6 }]}
+              style={[styles.textWrapper, { flexDirection: 'row', minWidth: 80 }, !props.useYearInput && { paddingRight: 6 }]}
             >
               {props.useYearInput ? (
                 <TextInput
-                  keyboardType="numeric"
+                  keyboardType='numeric'
                   value={currentDate.year().toString()}
                   selectTextOnFocus
-                  onChangeText={(value) => {
+                  onChangeText={value => {
                     if (+value >= 0 && value.length <= 4) {
-                      currentDate.year(+value);
-                      setCurrentDate(currentDate.clone());
+                      currentDate.year(+value)
+                      setCurrentDate(currentDate.clone())
                     }
                   }}
                   onBlur={() => {
@@ -714,9 +733,9 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
                       startDate.set({
                         month: currentDate.month(),
                         year: currentDate.year(),
-                      });
+                      })
                     }
-                    onBlur();
+                    onBlur()
                   }}
                   style={[styles.text, isMonthYearPicker && { fontSize: 19 }]}
                 />
@@ -727,14 +746,14 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
                     text: year.label,
                     onPress: () => {
                       forceBlur()
-                      currentDate.year(year.value);
+                      currentDate.year(year.value)
                       if (!props.withEndDate) {
                         startDate.set({
                           month: currentDate.month(),
                           year: currentDate.year(),
-                        });
+                        })
                       }
-                      onChangeCalendar();
+                      onChangeCalendar()
                     },
                   }))}
                   message={Locale.getItem('Выберите год')}
@@ -760,9 +779,9 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
             style={[styles.textWrapper, { width: 160, justifyContent: 'space-between', flexDirection: 'row', paddingRight: 6 }]}
             onPress={() => {
               forceBlur()
-              setIsMonthYearPicker(!isMonthYearPicker);
-              setIsStartTimePicker(false);
-              setIsEndTimePicker(false);
+              setIsMonthYearPicker(!isMonthYearPicker)
+              setIsStartTimePicker(false)
+              setIsEndTimePicker(false)
             }}
           >
             <Text style={[styles.text, isMonthYearPicker && { fontSize: 19 }]}>
@@ -775,32 +794,32 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
         ) : null}
 
         <View style={{ flex: 1, alignItems: 'flex-end' }}>
-          {AppConfig.mac ||
-            (!isMonthYearPicker &&
-              !isStartTimePicker &&
-              !isEndTimePicker &&
-              currentDate.format('MM.YYYY') !== maximumDate?.format('MM.YYYY')) ? (
-            <TouchableOpacity
-              onPress={() => {
-                forceBlur()
-                currentDate.add(1, 'month');
-                onChangeCalendar();
-                if (!props.withEndDate) {
-                  startDate.set({
-                    month: currentDate.month(),
-                    year: currentDate.year(),
-                  });
-                }
-                onBlur()
-              }}
-            >
-              <Icon name="chevron-right" size={24} color={AppConfig.mainColor} />
-            </TouchableOpacity>
-          ) : null}
+          {AppConfig.mac
+            || (!isMonthYearPicker
+              && !isStartTimePicker
+              && !isEndTimePicker
+              && currentDate.format('MM.YYYY') !== maximumDate?.format('MM.YYYY')) ? (
+                <TouchableOpacity
+                onPress={() => {
+                  forceBlur()
+                  currentDate.add(1, 'month')
+                  onChangeCalendar()
+                  if (!props.withEndDate) {
+                    startDate.set({
+                      month: currentDate.month(),
+                      year: currentDate.year(),
+                    })
+                  }
+                  onBlur()
+                  }}
+              >
+                <Icon name='chevron-right' size={24} color={AppConfig.mainColor} />
+              </TouchableOpacity>
+            ) : null}
         </View>
       </View>
     )
-  };
+  }
 
   const renderCalendar = () => (
     <View style={styles.calendarContainer}>
@@ -815,29 +834,29 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
               key={index}
               style={[
                 styles.dateBtn,
-                startDate.format('DD.MM.YYYY') === date?.format('DD.MM.YYYY') &&
-                styles.firstSelectedDate,
-                endDate?.format('DD.MM.YYYY') === date?.format('DD.MM.YYYY') &&
-                styles.lastSelectedDate,
+                startDate.format('DD.MM.YYYY') === date?.format('DD.MM.YYYY')
+                && styles.firstSelectedDate,
+                endDate?.format('DD.MM.YYYY') === date?.format('DD.MM.YYYY')
+                && styles.lastSelectedDate,
                 { backgroundColor: getDateBGColor(date) },
               ]}
               disabled={
-                !date ||
-                date.clone().endOf('day') < minimumDate ||
-                date.clone().startOf('day') > maximumDate
+                !date
+                || date.clone().endOf('day') < minimumDate
+                || date.clone().startOf('day') > maximumDate
               }
               onPress={() => {
-                const buf = date.clone().endOf('day').startOf('minute');
+                const buf = date.clone().endOf('day').startOf('minute')
                 buf.set({
                   hours: startDate.hours(),
                   minutes: startDate.minutes(),
-                });
+                })
 
                 if (buf < minimumDate) {
                   buf.set({
                     hours: minimumDate.hours(),
                     minutes: round(minimumDate.minutes(), minuteInterval, true),
-                  });
+                  })
                 } else if (buf > maximumDate) {
                   buf.set({
                     hours: maximumDate.hours(),
@@ -846,15 +865,15 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
                       minuteInterval,
                       false,
                     ),
-                  });
+                  })
                 }
 
                 if (props.withEndDate && !endDate && buf >= startDate && !firstСlickFirstDate) {
-                  setEndDate(buf);
+                  setEndDate(buf)
                 } else {
-                  setStartDate(buf);
-                  setEndDate(null);
-                  setFirstСlickFirstDate(false);
+                  setStartDate(buf)
+                  setEndDate(null)
+                  setFirstСlickFirstDate(false)
                 }
               }}
             >
@@ -882,11 +901,11 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
         </View>
       ))}
     </View>
-  );
+  )
 
   const renderMonthYearPicker = () => {
-    const months = getMonths();
-    const years = getYears();
+    const months = getMonths()
+    const years = getYears()
 
     return (
       <View style={{ flexDirection: 'row' }}>
@@ -895,9 +914,9 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
           textColor={AppConfig.plainColor}
           selectedValue={currentDate.month()}
           pickerData={months}
-          onValueChange={(month) => {
-            currentDate.month(month);
-            onChangeCalendar();
+          onValueChange={month => {
+            currentDate.month(month)
+            onChangeCalendar()
           }}
         />
 
@@ -907,49 +926,48 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
           itemStyle={{ color: AppConfig.plainColor }}
           selectedValue={currentDate.year()}
           pickerData={years}
-          onValueChange={(year) => {
-            currentDate.year(year);
-            onChangeCalendar();
+          onValueChange={year => {
+            currentDate.year(year)
+            onChangeCalendar()
           }}
         />
       </View>
-    );
-  };
+    )
+  }
 
   const renderTimePicker = () => {
-    const date = isEndTimePicker ? endDate : startDate;
-    const setDate = isEndTimePicker ? setEndDate : setStartDate;
-    let minHour = 0;
-    let maxHour = 23;
-    let minMinute = 0;
-    let maxMinute = 59;
-    const hours = [];
-    const minutes = [];
+    const date = isEndTimePicker ? endDate : startDate
+    const setDate = isEndTimePicker ? setEndDate : setStartDate
+    let minHour = 0
+    let maxHour = 23
+    let minMinute = 0
+    let maxMinute = 59
+    const hours = []
+    const minutes = []
 
     if (date.format('DD.MM.YYYY') === minimumDate?.format('DD.MM.YYYY')) {
-      minHour = minimumDate.hour();
-      minMinute = round(minimumDate.minutes(), minuteInterval, true);
+      minHour = minimumDate.hour()
+      minMinute = round(minimumDate.minutes(), minuteInterval, true)
     }
 
     if (date.format('DD.MM.YYYY') === maximumDate?.format('DD.MM.YYYY')) {
-      maxHour = maximumDate.hour();
-      maxMinute = maximumDate.minute();
+      maxHour = maximumDate.hour()
+      maxMinute = maximumDate.minute()
     }
 
     if (
-      isEndTimePicker &&
-      startDate.format('DD.MM.YYYY') === endDate.format('DD.MM.YYYY')
+      isEndTimePicker
+      && startDate.format('DD.MM.YYYY') === endDate.format('DD.MM.YYYY')
     ) {
-      minHour = startDate.hour();
-      minMinute =
-        startDate.hours() >= endDate.hours() ? startDate.minutes() : 0;
+      minHour = startDate.hour()
+      minMinute = startDate.hours() >= endDate.hours() ? startDate.minutes() : 0
     }
 
     for (let hour = minHour; hour <= maxHour; hour++) {
       hours.push({
         value: hour,
         label: hour < 10 ? '0' + hour : hour.toString(),
-      });
+      })
     }
 
     for (
@@ -960,7 +978,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
       minutes.push({
         value: minute,
         label: minute < 10 ? '0' + minute : minute.toString(),
-      });
+      })
     }
 
     return (
@@ -971,12 +989,12 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
           itemStyle={{ color: AppConfig.plainColor }}
           selectedValue={date.hour()}
           pickerData={hours}
-          onValueChange={(value) => {
-            setDate(date.hours(value).clone());
+          onValueChange={value => {
+            setDate(date.hours(value).clone())
             if (
-              props.withEndDate &&
-              endDate &&
-              startDate.unix() > endDate.unix()
+              props.withEndDate
+              && endDate
+              && startDate.unix() > endDate.unix()
             ) {
               setEndDate(
                 endDate
@@ -985,7 +1003,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
                     minutes: startDate.minutes(),
                   })
                   .clone(),
-              );
+              )
             }
           }}
         />
@@ -996,12 +1014,12 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
           itemStyle={{ color: AppConfig.plainColor }}
           selectedValue={date.minute()}
           pickerData={minutes}
-          onValueChange={(value) => {
-            setDate(date.minutes(value).clone());
+          onValueChange={value => {
+            setDate(date.minutes(value).clone())
             if (
-              props.withEndDate &&
-              endDate &&
-              startDate.unix() > endDate.unix()
+              props.withEndDate
+              && endDate
+              && startDate.unix() > endDate.unix()
             ) {
               setEndDate(
                 endDate
@@ -1010,29 +1028,29 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
                     minutes: startDate.minutes(),
                   })
                   .clone(),
-              );
+              )
             }
           }}
         />
       </View>
-    );
-  };
+    )
+  }
 
   const getTimeComponent = (isEndTime: boolean) => {
-    let isPicker = isStartTimePicker;
-    let date = startDate;
-    let setDate = setStartDate;
-    let setIsTimePicker = setIsStartTimePicker;
-    let hourTextInputRef = startHourTimeTextInputRef;
-    let minuteTextInputRef = startMinuteTimeTextInputRef;
+    let isPicker = isStartTimePicker
+    let date = startDate
+    let setDate = setStartDate
+    let setIsTimePicker = setIsStartTimePicker
+    let hourTextInputRef = startHourTimeTextInputRef
+    let minuteTextInputRef = startMinuteTimeTextInputRef
 
     if (isEndTime) {
-      isPicker = isEndTimePicker;
-      date = endDate;
-      setDate = setEndDate;
-      setIsTimePicker = setIsEndTimePicker;
-      hourTextInputRef = endHourTimeTextInputRef;
-      minuteTextInputRef = endMinuteTimeTextInputRef;
+      isPicker = isEndTimePicker
+      date = endDate
+      setDate = setEndDate
+      setIsTimePicker = setIsEndTimePicker
+      hourTextInputRef = endHourTimeTextInputRef
+      minuteTextInputRef = endMinuteTimeTextInputRef
     }
 
     return AppConfig.mac ? (
@@ -1040,17 +1058,17 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
         <View style={[styles.textWrapper, { flexDirection: 'row' }]}>
           <TextInput
             ref={hourTextInputRef}
-            keyboardType="numeric"
+            keyboardType='numeric'
             value={date.format('HH')}
             onFocus={() => setIsTimePicker(true)}
             selectTextOnFocus
-            onChangeText={(value) => {
+            onChangeText={value => {
               if (+value >= 0 && +value <= 23) {
-                date.hours(+value);
-                setDate(date.clone());
+                date.hours(+value)
+                setDate(date.clone())
 
                 if (date.hours() > 2) {
-                  minuteTextInputRef?.current.focus();
+                  minuteTextInputRef?.current.focus()
                 }
               }
             }}
@@ -1064,14 +1082,14 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
         <View style={[styles.textWrapper, { flexDirection: 'row' }]}>
           <TextInput
             ref={minuteTextInputRef}
-            keyboardType="numeric"
+            keyboardType='numeric'
             value={date.format('mm')}
             onFocus={() => setIsTimePicker(true)}
             selectTextOnFocus
-            onChangeText={(value) => {
+            onChangeText={value => {
               if (+value >= 0 && +value <= 59) {
-                date.minutes(+value);
-                setDate(date.clone());
+                date.minutes(+value)
+                setDate(date.clone())
               }
             }}
             onBlur={onBlur}
@@ -1085,46 +1103,129 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
           {date.format('HH:mm')}
         </Text>
       </View>
-    );
-  };
+    )
+  }
 
-  const renderTime = () => {
+  const getDateComponent = (isEndTime: boolean) => {
+    let input = startDateInput
+    let setInput = setStartDateInput
+    let date = startDate
+    let setDate = setStartDate
+    let dateTextInputRef = startDateTimeTextInputRef
+
+    if (isEndTime) {
+      input = endDateInput
+      setInput = setEndDateInput
+      date = endDate
+      setDate = setEndDate
+      dateTextInputRef = endDateTimeTextInputRef
+    }
+
+    return (
+      <View style={[styles.textWrapper, { flexDirection: 'row', width: 100 }]}>
+        <TextInput
+          ref={dateTextInputRef}
+          keyboardType='numeric'
+          value={input}
+          selectTextOnFocus
+          onChangeText={value => {
+            let formattedText = value.replace(/[^0-9]/g, '');
+
+            [2, 5].forEach(index => {
+              if (formattedText.length > index && formattedText[index] !== '.') {
+                formattedText = formattedText.slice(0, index) + '.' + formattedText.slice(index)
+              }
+            })
+
+            if (formattedText.replaceAll('.', '').length > 6) {
+              formattedText = formattedText.slice(0, 6)
+            }
+
+            setInput(formattedText)
+
+            if (formattedText.length === 8) {
+              const [day, month, year] = formattedText.split('.')
+
+              date.set({
+                date: +day,
+                month: +month - 1, // Отсчёт месяцев начинается с нуля 0
+                year: +`20${year}`,
+              })
+
+              setDate(date.clone())
+            }
+          }}
+          maxLength={8}
+          onBlur={() => {
+            onChangeCalendar()
+            onBlur()
+          }}
+          style={styles.text}
+        />
+      </View>
+    )
+  }
+
+  const renderDateTime = () => {
     if (props.withEndDate) {
       return (
-        <View style={[styles.timeContainer, { height: 64 }]}>
-          <TouchableOpacity
-            style={{ alignItems: 'center', paddingTop: 5 }}
-            disabled={AppConfig.mac}
-            onPress={() => {
-              setIsMonthYearPicker(false);
-              setIsStartTimePicker(!isStartTimePicker);
-              setIsEndTimePicker(false);
-            }}
-          >
-            <Text style={[styles.timeText, { marginBottom: 2 }]}>
-              {Locale.getItem('начало')}
-            </Text>
+        <>
+          {props.mode !== 'time' ? (
+            <View style={[styles.timeContainer, { height: 64 }]}>
+              <View style={{ alignItems: 'center', paddingTop: 5 }}>
+                <Text style={[styles.timeText, { marginBottom: 2 }]}>
+                  {Locale.getItem('начало')}
+                </Text>
 
-            {getTimeComponent(false)}
-          </TouchableOpacity>
+                {getDateComponent(false)}
+              </View>
 
-          {endDate ? (
-            <TouchableOpacity
-              style={{ alignItems: 'center', paddingTop: 5 }}
-              disabled={AppConfig.mac}
-              onPress={() => {
-                setIsMonthYearPicker(false);
-                setIsStartTimePicker(false);
-                setIsEndTimePicker(!isEndTimePicker);
-              }}
-            >
-              <Text style={styles.timeText}>{Locale.getItem('окончание')}</Text>
+              {endDate ? (
+                <View style={{ alignItems: 'center', paddingTop: 5 }}>
+                  <Text style={styles.timeText}>{Locale.getItem('окончание')}</Text>
 
-              {getTimeComponent(true)}
-            </TouchableOpacity>
+                  {getDateComponent(true)}
+                </View>
+              ) : null}
+            </View>
           ) : null}
-        </View>
-      );
+          {props.mode !== 'date' ? (
+            <View style={[styles.timeContainer, { height: 64 }]}>
+              <TouchableOpacity
+                style={{ alignItems: 'center', paddingTop: 5 }}
+                disabled={AppConfig.mac}
+                onPress={() => {
+                  setIsMonthYearPicker(false)
+                  setIsStartTimePicker(!isStartTimePicker)
+                  setIsEndTimePicker(false)
+                }}
+              >
+                <Text style={[styles.timeText, { marginBottom: 2 }]}>
+                  {Locale.getItem('начало')}
+                </Text>
+
+                {getTimeComponent(false)}
+              </TouchableOpacity>
+
+              {endDate ? (
+                <TouchableOpacity
+                  style={{ alignItems: 'center', paddingTop: 5 }}
+                  disabled={AppConfig.mac}
+                  onPress={() => {
+                    setIsMonthYearPicker(false)
+                    setIsStartTimePicker(false)
+                    setIsEndTimePicker(!isEndTimePicker)
+                  }}
+                >
+                  <Text style={styles.timeText}>{Locale.getItem('окончание')}</Text>
+
+                  {getTimeComponent(true)}
+                </TouchableOpacity>
+              ) : null}
+            </View>
+          ) : null}
+        </>
+      )
     }
 
     return (
@@ -1134,38 +1235,41 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
           { alignItems: 'center', justifyContent: 'space-between' },
         ]}
       >
-        <Text style={styles.text}>{Locale.getItem('Время')}</Text>
+        {props.mode !== 'time' ? (
+          getDateComponent(false)
+        ) : null}
 
-        <TouchableOpacity
-          disabled={AppConfig.mac}
-          onPress={() => {
-            setIsMonthYearPicker(false);
-            setIsStartTimePicker(!isStartTimePicker);
-            setIsEndTimePicker(false);
-          }}
-        >
-          {getTimeComponent(false)}
-        </TouchableOpacity>
+        {props.mode !== 'date' ? (
+          <TouchableOpacity
+            disabled={AppConfig.mac}
+            onPress={() => {
+              setIsMonthYearPicker(false)
+              setIsStartTimePicker(!isStartTimePicker)
+              setIsEndTimePicker(false)
+            }}
+          >
+            {getTimeComponent(false)}
+          </TouchableOpacity>
+        ) : null}
       </View>
-    );
-  };
+    )
+  }
 
   const renderButtons = () => (
     <View style={styles.buttonsContainer}>
-      {!AppConfig.mac &&
-        (isMonthYearPicker || isStartTimePicker || isEndTimePicker) ? (
-        <>
+      {!AppConfig.mac
+        && (isMonthYearPicker || isStartTimePicker || isEndTimePicker) ? (
           <TouchableOpacity
             style={styles.buttonWrapper}
             onPress={() => {
-              setIsMonthYearPicker(false);
-              setIsStartTimePicker(false);
-              setIsEndTimePicker(false);
+              setIsMonthYearPicker(false)
+              setIsStartTimePicker(false)
+              setIsEndTimePicker(false)
               if (!props.withEndDate) {
                 startDate.set({
                   month: currentDate.month(),
                   year: currentDate.year(),
-                });
+                })
               }
               onBlur()
             }}
@@ -1174,81 +1278,86 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
               {Locale.getItem('Выбрать')}
             </Text>
           </TouchableOpacity>
-        </>
-      ) : (
-        <>
-          <TouchableOpacity style={styles.buttonWrapper} onPress={onCancel}>
-            <Text style={[styles.text, { color: AppConfig.errorColor }]}>
-              {Locale.getItem('Отмена')}
-            </Text>
-          </TouchableOpacity>
+        ) : (
+          <>
+            <TouchableOpacity style={styles.buttonWrapper} onPress={onCancel}>
+              <Text style={[styles.text, { color: AppConfig.errorColor }]}>
+                {Locale.getItem('Отмена')}
+              </Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.buttonWrapper}
-            onPress={() => {
-              onBlur();
-              onConfirm(startDate.toDate(), endDate?.toDate());
-            }}
-          >
-            <Text style={[styles.text, { color: AppConfig.mainColor }]}>
-              {Locale.getItem('OK')}
-            </Text>
-          </TouchableOpacity>
-        </>
-      )}
+            <TouchableOpacity
+              style={styles.buttonWrapper}
+              onPress={() => {
+                onBlur()
+                onConfirm(startDate.toDate(), endDate?.toDate())
+              }}
+            >
+              <Text style={[styles.text, { color: AppConfig.mainColor }]}>
+                {Locale.getItem('OK')}
+              </Text>
+            </TouchableOpacity>
+          </>
+        )}
     </View>
-  );
+  )
 
   return (
     <>
-      {props.children && props.children(showPicker)}
-      {(AppConfig.mac && props.mode === 'time') ||
-        minimumDate > maximumDate ? null : (
-        <Modal
-          animationIn="slideInUp"
-          animationOut="slideOutDown"
-          isVisible={isVisible}
-          useNativeDriver
-          onBackButtonPress={onCancel}
-          onBackdropPress={onCancel}
-          onModalHide={onCancel}
-          style={{ flex: 1, margin: 0 }}
-        >
-          <View style={styles.container}>
-            {['date', 'datetime'].includes(mode) ? (
-              <>
-                {renderHeader()}
+      {props.children ? props.children(showPicker) : null}
+      {(AppConfig.mac && props.mode === 'time')
+        || minimumDate > maximumDate ? null : (
+          <Modal
+            animationIn='slideInUp'
+            animationOut='slideOutDown'
+            isVisible={isVisible}
+            useNativeDriver
+            onBackButtonPress={onCancel}
+            onBackdropPress={onCancel}
+            onModalHide={onCancel}
+            style={{ flex: 1, margin: 0 }}
+          >
+            <View
+              style={[
+                styles.container,
+                props.mode === 'time' && { minHeight: 0 },
+                isKeyboardOpen && { bottom: 170 },
+              ]}
+            >
+              {['date', 'datetime'].includes(mode) ? (
+                <>
+                  {renderHeader()}
 
-                {AppConfig.mac ||
-                  (!isMonthYearPicker && !isStartTimePicker && !isEndTimePicker)
-                  ? renderCalendar()
-                  : null}
+                  {AppConfig.mac
+                  || (!isMonthYearPicker && !isStartTimePicker && !isEndTimePicker)
+                    ? renderCalendar()
+                    : null}
 
-                {!AppConfig.mac && isMonthYearPicker
-                  ? renderMonthYearPicker()
-                  : null}
-              </>
-            ) : null}
+                  {!AppConfig.mac && isMonthYearPicker
+                    ? renderMonthYearPicker()
+                    : null}
+                </>
+              ) : null}
 
-            {!AppConfig.mac &&
-              ((mode === 'time' && !props.withEndDate) ||
-                isStartTimePicker ||
-                isEndTimePicker)
-              ? renderTimePicker()
-              : null}
-
-            <View>
-              {mode === 'datetime' || (mode === 'time' && props.withEndDate)
-                ? renderTime()
+              {!AppConfig.mac
+              && ((mode === 'time' && !props.withEndDate)
+                || isStartTimePicker
+                || isEndTimePicker)
+                ? renderTimePicker()
                 : null}
 
-              {renderButtons()}
-            </View>
-          </View>
-        </Modal>
-      )}
-    </>
-  );
-};
+              <View>
+                {(mode === 'time' && !props.withEndDate)
+                  ? null
+                  : renderDateTime()}
 
-export default DatePicker;
+                {renderButtons()}
+              </View>
+            </View>
+          </Modal>
+        )}
+    </>
+  )
+}
+
+export default DatePicker
