@@ -412,6 +412,9 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = props => {
   }
 
   const hidePicker = () => {
+    forceBlur()
+    onChangeCalendar()
+    onBlur()
     setIsVisible(false)
     setIsMonthYearPicker(false)
     setIsStartTimePicker(false)
