@@ -37,7 +37,11 @@ interface IDatePickerProps {
   mainColor?: string;
 }
 
-const DatePicker: React.FunctionComponent<IDatePickerProps> = props => {
+type IDatePickerModalProps = IDatePickerProps & {
+  hidePicker: () => void;
+}
+
+const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props => {
   const Locale = {
     weekDayNamesShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
     locale: {
@@ -268,7 +272,6 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = props => {
     ? moment(props.maximumDate)
     : moment(AppConfig.date_limits.max)
   const minuteInterval = props.noInterval ? 1 : props.minuteInterval || 5
-  const [isVisible, setIsVisible] = useState(false)
   const [currentDate, setCurrentDate] = useState(() => {
     let date = props.date ? moment(props.date) : moment()
 
@@ -341,12 +344,6 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = props => {
   }, [])
 
   useEffect(() => {
-    if (props.isVisible) {
-      showPicker()
-    }
-  }, [props.isVisible])
-
-  useEffect(() => {
     setStartDateInput(startDate.format('DD.MM.YY'))
   }, [startDate])
 
@@ -407,34 +404,13 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = props => {
     return number
   }
 
-  const showPicker = () => {
-    setIsVisible(() => true)
-  }
-
-  const hidePicker = () => {
-    forceBlur()
-    onChangeCalendar()
-    onBlur()
-    setIsVisible(false)
-    setIsMonthYearPicker(false)
-    setIsStartTimePicker(false)
-    setIsEndTimePicker(false)
-  }
-
   const onConfirm = (date: Date, endDate?: Date) => {
-    hidePicker()
+    props.hidePicker()
 
     if (props.withEndDate && endDate) {
       props.onConfirm(date, endDate)
     } else {
       props.onConfirm(date)
-    }
-  }
-
-  const onCancel = () => {
-    hidePicker()
-    if (props.onCancel) {
-      props.onCancel()
     }
   }
 
@@ -1284,7 +1260,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = props => {
           </TouchableOpacity>
         ) : (
           <>
-            <TouchableOpacity style={styles.buttonWrapper} onPress={onCancel}>
+            <TouchableOpacity style={styles.buttonWrapper} onPress={props.onCancel}>
               <Text style={[styles.text, { color: AppConfig.errorColor }]}>
                 {Locale.getItem('Отмена')}
               </Text>
@@ -1306,60 +1282,91 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = props => {
     </View>
   )
 
+  if ((AppConfig.mac && props.mode === 'time') || minimumDate > maximumDate) {
+    props.hidePicker()
+    return null
+  }
+
+  return (
+    <View
+      style={[
+        styles.container,
+        props.mode === 'time' && { minHeight: 0 },
+        isKeyboardOpen && AppConfig.iOS && { bottom: 300 },
+      ]}
+    >
+      {['date', 'datetime'].includes(mode) ? (
+        <>
+          {renderHeader()}
+
+          {AppConfig.mac
+          || (!isMonthYearPicker && !isStartTimePicker && !isEndTimePicker)
+            ? renderCalendar()
+            : null}
+
+          {!AppConfig.mac && isMonthYearPicker
+            ? renderMonthYearPicker()
+            : null}
+        </>
+      ) : null}
+
+      {!AppConfig.mac
+      && ((mode === 'time' && !props.withEndDate)
+        || isStartTimePicker
+        || isEndTimePicker)
+        ? renderTimePicker()
+        : null}
+
+      <View>
+        {(mode === 'time' && !props.withEndDate)
+          ? null
+          : renderDateTime()}
+
+        {renderButtons()}
+      </View>
+    </View>
+  )
+}
+
+const DatePicker: React.FunctionComponent<IDatePickerProps> = props => {
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    if (props.isVisible) {
+      showPicker()
+    }
+  }, [props.isVisible])
+
+  const showPicker = () => setIsVisible(true)
+
+  const hidePicker = () => setIsVisible(false)
+
+  const onCancel = () => {
+    hidePicker()
+    if (props.onCancel) {
+      props.onCancel()
+    }
+  }
+
   return (
     <>
       {props.children ? props.children(showPicker) : null}
-      {(AppConfig.mac && props.mode === 'time')
-        || minimumDate > maximumDate ? null : (
-          <Modal
-            animationIn='slideInUp'
-            animationOut='slideOutDown'
-            isVisible={isVisible}
-            useNativeDriver
-            onBackButtonPress={onCancel}
-            onBackdropPress={onCancel}
-            onModalHide={onCancel}
-            style={{ flex: 1, margin: 0 }}
-          >
-            <View
-              style={[
-                styles.container,
-                props.mode === 'time' && { minHeight: 0 },
-                isKeyboardOpen && AppConfig.iOS && { bottom: 300 },
-              ]}
-            >
-              {['date', 'datetime'].includes(mode) ? (
-                <>
-                  {renderHeader()}
-
-                  {AppConfig.mac
-                  || (!isMonthYearPicker && !isStartTimePicker && !isEndTimePicker)
-                    ? renderCalendar()
-                    : null}
-
-                  {!AppConfig.mac && isMonthYearPicker
-                    ? renderMonthYearPicker()
-                    : null}
-                </>
-              ) : null}
-
-              {!AppConfig.mac
-              && ((mode === 'time' && !props.withEndDate)
-                || isStartTimePicker
-                || isEndTimePicker)
-                ? renderTimePicker()
-                : null}
-
-              <View>
-                {(mode === 'time' && !props.withEndDate)
-                  ? null
-                  : renderDateTime()}
-
-                {renderButtons()}
-              </View>
-            </View>
-          </Modal>
-        )}
+      <Modal
+        animationIn='slideInUp'
+        animationOut='slideOutDown'
+        isVisible={isVisible}
+        useNativeDriver
+        onBackButtonPress={onCancel}
+        onBackdropPress={onCancel}
+        onModalHide={onCancel}
+        style={{ flex: 1, margin: 0 }}
+      >
+        <DatePickerModal
+          {...props}
+          hidePicker={hidePicker}
+          onCancel={onCancel}
+        />
+      </Modal>
     </>
   )
 }
