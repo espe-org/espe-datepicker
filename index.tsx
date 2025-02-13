@@ -1163,7 +1163,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = props => {
             onChangeCalendar()
             onBlur()
           }}
-          style={styles.text}
+          style={[styles.text, { padding: 0 }]}
         />
       </View>
     )
@@ -1325,7 +1325,7 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = props => {
               style={[
                 styles.container,
                 props.mode === 'time' && { minHeight: 0 },
-                isKeyboardOpen && { bottom: 170 },
+                isKeyboardOpen && AppConfig.iOS && { bottom: 300 },
               ]}
             >
               {['date', 'datetime'].includes(mode) ? (
