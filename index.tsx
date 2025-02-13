@@ -344,12 +344,12 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
   }, [])
 
   useEffect(() => {
-    setStartDateInput(startDate.format('DD.MM.YY'))
+    setStartDateInput(startDate.format('DD.MM.YYYY'))
   }, [startDate])
 
   useEffect(() => {
     if (endDate) {
-      setEndDateInput(endDate?.format('DD.MM.YY'))
+      setEndDateInput(endDate?.format('DD.MM.YYYY'))
     }
   }, [endDate])
 
@@ -1101,7 +1101,7 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
     }
 
     return (
-      <View style={[styles.textWrapper, { flexDirection: 'row', width: 100 }]}>
+      <View style={[styles.textWrapper, { flexDirection: 'row', width: 125 }]}>
         <TextInput
           ref={dateTextInputRef}
           keyboardType='numeric'
@@ -1116,25 +1116,25 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
               }
             })
 
-            if (formattedText.replaceAll('.', '').length > 6) {
-              formattedText = formattedText.slice(0, 6)
+            if (formattedText.replaceAll('.', '').length > 8) {
+              formattedText = formattedText.slice(0, 8)
             }
 
             setInput(formattedText)
 
-            if (formattedText.length === 8) {
+            if (formattedText.length === 10) {
               const [day, month, year] = formattedText.split('.')
 
               date.set({
                 date: +day,
                 month: +month - 1, // Отсчёт месяцев начинается с нуля 0
-                year: +`20${year}`,
+                year: +year,
               })
 
               setDate(date.clone())
             }
           }}
-          maxLength={8}
+          maxLength={10}
           onBlur={() => {
             onChangeCalendar()
             onBlur()
