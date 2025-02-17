@@ -1132,6 +1132,16 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
               })
 
               setDate(date.clone())
+
+              if (date.format('DD.MM.YYYY') !== currentDate.format('DD.MM.YYYY')) {
+                currentDate.set({
+                  date: +day,
+                  month: +month - 1, // Отсчёт месяцев начинается с нуля 0
+                  year: +year,
+                })
+
+                onChangeCalendar()
+              }
             }
           }}
           maxLength={10}
