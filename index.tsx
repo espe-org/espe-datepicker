@@ -1292,7 +1292,7 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
     </View>
   )
 
-  if ((AppConfig.mac && props.mode === 'time') || minimumDate > maximumDate) {
+  if (minimumDate > maximumDate) {
     props.hidePicker()
     return null
   }
@@ -1328,7 +1328,7 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
         : null}
 
       <View>
-        {(mode === 'time' && !props.withEndDate)
+        {(!AppConfig.mac && mode === 'time' && !props.withEndDate)
           ? null
           : renderDateTime()}
 
