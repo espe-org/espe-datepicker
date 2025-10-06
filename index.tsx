@@ -268,7 +268,8 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
 
     get actionsContainer() {
       return {
-        padding: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 16,
         borderTopWidth: 1,
         borderColor: AppConfig.borderColor,
       }
