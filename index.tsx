@@ -17,10 +17,19 @@ import {
   Keyboard,
 } from 'react-native'
 
+type Mode = 'date' | 'time' | 'datetime' | 'workingdays' | 'nodate'
+
+type Action = {
+  text: string;
+  mode: Mode;
+  onPress?: (a?: any, b?: any) => void;
+  subText?: string;
+}
+
 interface IDatePickerProps {
   date?: Date;
   endDate?: Date;
-  mode?: 'date' | 'time' | 'datetime';
+  mode?: Mode;
   onConfirm: (date: Date, endDate?: Date) => void;
   onCancel?: () => void;
   children?: (showPicker: (e?: any) => void) => React.ReactElement;
@@ -36,7 +45,9 @@ interface IDatePickerProps {
   isDarkMode?: boolean;
   mainColor?: string;
   actionTitle?: string;
-  actions?: any[];
+  actions?: Action[];
+  selected?: number;
+  workingDays?: number;
 }
 
 type IDatePickerModalProps = IDatePickerProps & {
@@ -75,6 +86,7 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
         'окончание': 'end',
         'OK': 'OK',
         'Отмена': 'Cancel',
+        'рабочих дней': 'working days',
       },
       ru: {},
     } as Record<string, Record<string, string>>,
@@ -130,7 +142,12 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
       return {
         position: 'absolute' as const,
         bottom: 0,
+        overflow: 'hidden' as const,
+        justifyContent: 'space-between' as const,
         alignSelf: 'center' as const,
+        borderRadius: 8,
+        backgroundColor: AppConfig.dark ? '#242424' : AppConfig.mainBG,
+        minHeight: 435,
         width: AppConfig.isPad
           ? 380
           : Math.min(AppConfig.windowWidth, AppConfig.windowHeight, 440)
@@ -138,68 +155,6 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
         margin: 10,
         marginBottom:
           AppConfig.hasNotch || AppConfig.isPad || AppConfig.android ? 24 : 0,
-      }
-    },
-
-    get actionsContainer() {
-      return {
-        padding: 10,
-        marginBottom: 12,
-        borderRadius: 8,
-        backgroundColor: AppConfig.dark ? '#242424' : AppConfig.mainBG,
-      }
-    },
-
-    get actionTitle() {
-      return {
-        color: AppConfig.grayColor,
-        fontFamily: 'TTNorms-Medium',
-        fontSize: 11,
-      }
-    },
-    
-    actionWrapper: {
-      flexDirection: 'row', 
-      marginTop: 10,
-    },
-
-    get checkbox() {
-      return {
-        borderWidth: 1,
-        borderRadius: 7,
-        borderColor: AppConfig.plainColor,
-        marginRight: 10,
-        alignItems: 'center' as const,
-        justifyContent: 'center' as const,
-        height: 20,
-        aspectRatio: 1,
-      }
-    },
-
-    get actionText() {
-      return {
-        color: AppConfig.plainColor,
-        fontFamily: 'TTNorms-Medium',
-        fontSize: 10,
-      }
-    },
-
-    get subText() {
-      return {
-        color: AppConfig.grayColor,
-        fontFamily: 'TTNorms-Medium',
-        fontSize: 7,
-      }
-    },
-
-    get mainContainer() {
-      return {
-        overflow: 'hidden' as const,
-        justifyContent: 'space-between' as const,
-        borderRadius: 8,
-        backgroundColor: AppConfig.dark ? '#242424' : AppConfig.mainBG,
-        minHeight: 435,
-        width: '100%' as const,
       }
     },
 
@@ -302,6 +257,63 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
       }
     },
 
+    workingDaysWrapper: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: 48,
+    },
+
+    get actionsContainer() {
+      return {
+        padding: 10,
+        borderTopWidth: 1,
+        borderColor: AppConfig.borderColor,
+      }
+    },
+
+    get actionTitle() {
+      return {
+        color: AppConfig.grayColor,
+        fontFamily: 'TTNorms-Medium',
+        fontSize: 11,
+      }
+    },
+
+    actionWrapper: {
+      flexDirection: 'row',
+      marginTop: 10,
+    },
+
+    get checkbox() {
+      return {
+        borderWidth: 1,
+        borderRadius: 7,
+        borderColor: AppConfig.plainColor,
+        marginRight: 10,
+        alignItems: 'center' as const,
+        justifyContent: 'center' as const,
+        height: 20,
+        aspectRatio: 1,
+      }
+    },
+
+    get actionText() {
+      return {
+        color: AppConfig.plainColor,
+        fontFamily: 'TTNorms-Medium',
+        fontSize: 10,
+      }
+    },
+
+    get subText() {
+      return {
+        color: AppConfig.grayColor,
+        fontFamily: 'TTNorms-Medium',
+        fontSize: 7,
+      }
+    },
+
     get buttonsContainer() {
       return {
         flexDirection: 'row' as const,
@@ -323,8 +335,9 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
     },
   })
 
-  const [selectedActionIndex, setSelectedActionIndex] = useState(-1)
-  const mode = props.mode || 'date'
+  const [selectedActionIndex, setSelectedActionIndex] = useState(props.selected ?? -1)
+  const [mode, setMode] = useState(props.actions?.[selectedActionIndex]?.mode || props.mode || 'date')
+  const [workingDays, setWorkingDays] = useState(props.workingDays ?? 20)
   const minimumDate = props.minimumDate
     ? moment(props.minimumDate)
     : moment(AppConfig.date_limits.min)
@@ -395,7 +408,7 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
       }
     }
 
-    if (['date', 'datetime'].includes(mode)) {
+    if (['date', 'datetime', 'workingdays', 'nodate'].includes(mode)) {
       onChangeCalendar()
     } else if (mode === 'time' && props.withEndDate) {
       setEndDate(startDate.clone())
@@ -467,10 +480,21 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
   const onConfirm = (date: Date, endDate?: Date) => {
     props.hidePicker()
 
+    let onClick = props.onConfirm
+    if (props.actions?.[selectedActionIndex]) {
+      onClick = props.actions[selectedActionIndex].onPress
+
+      if (mode === 'workingdays') {
+        // @ts-ignore
+        onClick(workingDays)
+        return
+      }
+    }
+
     if (props.withEndDate && endDate) {
-      props.onConfirm(date, endDate)
+      onClick(date, endDate)
     } else {
-      props.onConfirm(date)
+      onClick(date)
     }
   }
 
@@ -679,45 +703,6 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
     }
 
     return years
-  }
-
-  const renderActions = () => {
-    if (!props.actionTitle || !props.actions) {
-      return null
-    }
-
-    return (
-      <View style={styles.actionsContainer}>
-        {props.actionTitle 
-          ? <Text style={styles.actionTitle}>{props.actionTitle}</Text>
-          : null}
-        {props.actions.map((action, index) => (
-          <TouchableOpacity
-            key={action.text}
-            style={styles.actionWrapper}
-            onPress={() => {
-              if (selectedActionIndex === index) {
-                setSelectedActionIndex(-1)
-              } else {
-                setSelectedActionIndex(index)
-              }
-            }}
-          >
-            <View style={styles.checkbox}>
-              {selectedActionIndex === index
-                ? <Icon name='check' size={11} color={AppConfig.plainColor} />
-                : null}
-            </View>
-            <View style={{ justifyContent: action.subText ? 'space-between' : 'center' }}>
-              <Text style={styles.actionText}>{action.text}</Text>
-              {action.subText
-                ? <Text style={styles.subText}>{action.text}</Text>
-                : null}
-            </View>
-          </TouchableOpacity>
-        ))}
-      </View>
-    )
   }
 
   const renderHeader = () => {
@@ -1014,6 +999,10 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
   }
 
   const renderTimePicker = () => {
+    if (mode === 'workingdays' || mode === 'nodate') {
+      return null
+    }
+
     const date = isEndTimePicker ? endDate : startDate
     const setDate = isEndTimePicker ? setEndDate : setStartDate
     let minHour = 0
@@ -1255,10 +1244,14 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
   }
 
   const renderDateTime = () => {
+    if (mode === 'workingdays' || mode === 'nodate') {
+      return null
+    }
+
     if (props.withEndDate) {
       return (
         <>
-          {props.mode !== 'time' ? (
+          {mode !== 'time' ? (
             <View style={[styles.timeContainer, { height: 64 }]}>
               <View style={{ alignItems: 'center', paddingTop: 5 }}>
                 <Text style={styles.timeText}>
@@ -1277,7 +1270,7 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
               ) : null}
             </View>
           ) : null}
-          {props.mode !== 'date' ? (
+          {mode !== 'date' ? (
             <View style={[styles.timeContainer, { height: 64 }]}>
               <TouchableOpacity
                 style={{ alignItems: 'center', paddingTop: 5 }}
@@ -1324,11 +1317,11 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
           mode !== 'datetime' && { justifyContent: 'center' },
         ]}
       >
-        {props.mode !== 'time' ? (
+        {mode !== 'time' ? (
           getDateComponent(false)
         ) : null}
 
-        {props.mode !== 'date' ? (
+        {mode !== 'date' ? (
           <TouchableOpacity
             disabled={AppConfig.mac}
             onPress={() => {
@@ -1340,6 +1333,65 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
             {getTimeComponent(false)}
           </TouchableOpacity>
         ) : null}
+      </View>
+    )
+  }
+
+  const renderWorkingDays = () => (
+    <View style={styles.workingDaysWrapper}>
+      <View style={[styles.textWrapper, { minWidth: 70 }]}>
+        <TextInput
+          keyboardType='numeric'
+          value={workingDays.toString()}
+          selectTextOnFocus
+          onChangeText={value => setWorkingDays(+value.replace(/[^0-9]/g, ''))}
+          maxLength={10}
+          style={styles.text}
+        />
+      </View>
+      <Text style={[styles.text, { marginLeft: 15 }]}>
+        {Locale.getItem('рабочих дней')}
+      </Text>
+    </View>
+  )
+
+  const renderActions = () => {
+    if (!props.actionTitle || !props.actions) {
+      return null
+    }
+
+    return (
+      <View style={styles.actionsContainer}>
+        {props.actionTitle
+          ? <Text style={styles.actionTitle}>{props.actionTitle}</Text>
+          : null}
+        {props.actions.map((action, index) => (
+          <TouchableOpacity
+            key={action.text}
+            style={styles.actionWrapper}
+            onPress={() => {
+              if (selectedActionIndex === index) {
+                setSelectedActionIndex(-1)
+                setMode(props.mode || 'date')
+              } else {
+                setSelectedActionIndex(index)
+                setMode(action.mode)
+              }
+            }}
+          >
+            <View style={styles.checkbox}>
+              {selectedActionIndex === index
+                ? <Icon name='check' size={11} color={AppConfig.plainColor} />
+                : null}
+            </View>
+            <View style={{ justifyContent: action.subText ? 'space-between' : 'center' }}>
+              <Text style={styles.actionText}>{action.text}</Text>
+              {action.subText
+                ? <Text style={styles.subText}>{action.text}</Text>
+                : null}
+            </View>
+          </TouchableOpacity>
+        ))}
       </View>
     )
   }
@@ -1400,42 +1452,42 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
     <View
       style={[
         styles.container,
-        props.mode === 'time' && { minHeight: 0 },
+        ['time', 'workingdays', 'nodate'].includes(mode) && { minHeight: 0 },
         isKeyboardOpen && AppConfig.iOS && { bottom: 300 },
       ]}
     >
-      {renderActions()}
+      {['date', 'datetime'].includes(mode) ? (
+        <>
+          {renderHeader()}
 
-      <View style={styles.mainContainer}>
-        {['date', 'datetime'].includes(mode) ? (
-          <>
-            {renderHeader()}
+          {AppConfig.mac
+          || (!isMonthYearPicker && !isStartTimePicker && !isEndTimePicker)
+            ? renderCalendar()
+            : null}
 
-            {AppConfig.mac
-            || (!isMonthYearPicker && !isStartTimePicker && !isEndTimePicker)
-              ? renderCalendar()
-              : null}
+          {!AppConfig.mac && isMonthYearPicker
+            ? renderMonthYearPicker()
+            : null}
+        </>
+      ) : null}
 
-            {!AppConfig.mac && isMonthYearPicker
-              ? renderMonthYearPicker()
-              : null}
-          </>
-        ) : null}
+      {!AppConfig.mac
+      && ((mode === 'time' && !props.withEndDate)
+        || isStartTimePicker
+        || isEndTimePicker)
+        ? renderTimePicker()
+        : null}
 
-        {!AppConfig.mac
-        && ((mode === 'time' && !props.withEndDate)
-          || isStartTimePicker
-          || isEndTimePicker)
-          ? renderTimePicker()
-          : null}
+      <View>
+        {(!AppConfig.mac && mode === 'time' && !props.withEndDate)
+          ? null
+          : renderDateTime()}
 
-        <View>
-          {(!AppConfig.mac && mode === 'time' && !props.withEndDate)
-            ? null
-            : renderDateTime()}
+        {mode === 'workingdays' ? renderWorkingDays() : null}
 
-          {renderButtons()}
-        </View>
+        {renderActions()}
+
+        {renderButtons()}
       </View>
     </View>
   )
