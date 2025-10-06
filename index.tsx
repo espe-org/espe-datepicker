@@ -145,7 +145,7 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
         overflow: 'hidden' as const,
         justifyContent: 'space-between' as const,
         alignSelf: 'center' as const,
-        borderRadius: 8,
+        borderRadius: 24,
         backgroundColor: AppConfig.dark ? '#242424' : AppConfig.mainBG,
         minHeight: 435,
         width: AppConfig.isPad
@@ -282,19 +282,20 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
 
     actionWrapper: {
       flexDirection: 'row',
+      alignItems: 'center',
       marginTop: 10,
     },
 
     get checkbox() {
       return {
-        borderWidth: 1,
-        borderRadius: 7,
-        borderColor: AppConfig.plainColor,
+        borderRadius: 8,
+        backgroundColor: AppConfig.dark ? '#484848' : '#E8E8E8',
         marginRight: 10,
         alignItems: 'center' as const,
         justifyContent: 'center' as const,
         height: 20,
-        aspectRatio: 1,
+        width: 20,
+        // aspectRatio: 1,
       }
     },
 
@@ -302,7 +303,7 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
       return {
         color: AppConfig.plainColor,
         fontFamily: 'TTNorms-Medium',
-        fontSize: 10,
+        fontSize: 12,
       }
     },
 
@@ -310,7 +311,7 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
       return {
         color: AppConfig.grayColor,
         fontFamily: 'TTNorms-Medium',
-        fontSize: 7,
+        fontSize: 10,
       }
     },
 
@@ -716,23 +717,23 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
               && !isStartTimePicker
               && !isEndTimePicker
               && currentDate.format('MM.YYYY') !== minimumDate?.format('MM.YYYY')) ? (
-                <TouchableOpacity
-                onPress={() => {
-                  forceBlur()
-                  currentDate.subtract(1, 'month')
-                  onChangeCalendar()
-                  if (!props.withEndDate) {
-                    startDate.set({
-                      month: currentDate.month(),
-                      year: currentDate.year(),
-                    })
-                  }
-                  onBlur()
-                  }}
-              >
-                <Icon name='chevron-left' size={24} color={AppConfig.mainColor} />
-              </TouchableOpacity>
-            ) : null}
+            <TouchableOpacity
+              onPress={() => {
+                forceBlur()
+                currentDate.subtract(1, 'month')
+                onChangeCalendar()
+                if (!props.withEndDate) {
+                  startDate.set({
+                    month: currentDate.month(),
+                    year: currentDate.year(),
+                  })
+                }
+                onBlur()
+              }}
+            >
+              <Icon name='chevron-left' size={24} color={AppConfig.mainColor} />
+            </TouchableOpacity>
+          ) : null}
         </View>
 
         {AppConfig.mac ? (
@@ -862,23 +863,23 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
               && !isStartTimePicker
               && !isEndTimePicker
               && currentDate.format('MM.YYYY') !== maximumDate?.format('MM.YYYY')) ? (
-                <TouchableOpacity
-                onPress={() => {
-                  forceBlur()
-                  currentDate.add(1, 'month')
-                  onChangeCalendar()
-                  if (!props.withEndDate) {
-                    startDate.set({
-                      month: currentDate.month(),
-                      year: currentDate.year(),
-                    })
-                  }
-                  onBlur()
-                  }}
-              >
-                <Icon name='chevron-right' size={24} color={AppConfig.mainColor} />
-              </TouchableOpacity>
-            ) : null}
+            <TouchableOpacity
+              onPress={() => {
+                forceBlur()
+                currentDate.add(1, 'month')
+                onChangeCalendar()
+                if (!props.withEndDate) {
+                  startDate.set({
+                    month: currentDate.month(),
+                    year: currentDate.year(),
+                  })
+                }
+                onBlur()
+              }}
+            >
+              <Icon name='chevron-right' size={24} color={AppConfig.mainColor} />
+            </TouchableOpacity>
+          ) : null}
         </View>
       </View>
     )
@@ -1379,9 +1380,9 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
               }
             }}
           >
-            <View style={styles.checkbox}>
+            <View style={[styles.checkbox, selectedActionIndex === index && { backgroundColor: AppConfig.mainColor }]}>
               {selectedActionIndex === index
-                ? <Icon name='check' size={11} color={AppConfig.plainColor} />
+                ? <Icon name='check' size={16} color='white' />
                 : null}
             </View>
             <View style={{ justifyContent: action.subText ? 'space-between' : 'center' }}>
@@ -1400,46 +1401,46 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
     <View style={styles.buttonsContainer}>
       {!AppConfig.mac
         && (isMonthYearPicker || isStartTimePicker || isEndTimePicker) ? (
+        <TouchableOpacity
+          style={styles.buttonWrapper}
+          onPress={() => {
+            setIsMonthYearPicker(false)
+            setIsStartTimePicker(false)
+            setIsEndTimePicker(false)
+            if (!props.withEndDate) {
+              startDate.set({
+                month: currentDate.month(),
+                year: currentDate.year(),
+              })
+            }
+            onBlur()
+          }}
+        >
+          <Text style={[styles.text, { color: AppConfig.mainColor }]}>
+            {Locale.getItem('Выбрать')}
+          </Text>
+        </TouchableOpacity>
+      ) : (
+        <>
+          <TouchableOpacity style={styles.buttonWrapper} onPress={props.onCancel}>
+            <Text style={[styles.text, { color: AppConfig.errorColor }]}>
+              {Locale.getItem('Отмена')}
+            </Text>
+          </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.buttonWrapper}
             onPress={() => {
-              setIsMonthYearPicker(false)
-              setIsStartTimePicker(false)
-              setIsEndTimePicker(false)
-              if (!props.withEndDate) {
-                startDate.set({
-                  month: currentDate.month(),
-                  year: currentDate.year(),
-                })
-              }
               onBlur()
+              onConfirm(startDate.toDate(), endDate?.toDate())
             }}
           >
             <Text style={[styles.text, { color: AppConfig.mainColor }]}>
-              {Locale.getItem('Выбрать')}
+              {Locale.getItem('OK')}
             </Text>
           </TouchableOpacity>
-        ) : (
-          <>
-            <TouchableOpacity style={styles.buttonWrapper} onPress={props.onCancel}>
-              <Text style={[styles.text, { color: AppConfig.errorColor }]}>
-                {Locale.getItem('Отмена')}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.buttonWrapper}
-              onPress={() => {
-                onBlur()
-                onConfirm(startDate.toDate(), endDate?.toDate())
-              }}
-            >
-              <Text style={[styles.text, { color: AppConfig.mainColor }]}>
-                {Locale.getItem('OK')}
-              </Text>
-            </TouchableOpacity>
-          </>
-        )}
+        </>
+      )}
     </View>
   )
 
@@ -1461,7 +1462,7 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
           {renderHeader()}
 
           {AppConfig.mac
-          || (!isMonthYearPicker && !isStartTimePicker && !isEndTimePicker)
+            || (!isMonthYearPicker && !isStartTimePicker && !isEndTimePicker)
             ? renderCalendar()
             : null}
 
@@ -1472,9 +1473,9 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
       ) : null}
 
       {!AppConfig.mac
-      && ((mode === 'time' && !props.withEndDate)
-        || isStartTimePicker
-        || isEndTimePicker)
+        && ((mode === 'time' && !props.withEndDate)
+          || isStartTimePicker
+          || isEndTimePicker)
         ? renderTimePicker()
         : null}
 
