@@ -1387,7 +1387,7 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
             <View style={{ justifyContent: action.subText ? 'space-between' : 'center' }}>
               <Text style={styles.actionText}>{action.text}</Text>
               {action.subText
-                ? <Text style={styles.subText}>{action.text}</Text>
+                ? <Text style={styles.subText}>{action.subText}</Text>
                 : null}
             </View>
           </TouchableOpacity>
