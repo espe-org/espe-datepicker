@@ -86,6 +86,8 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
         'окончание': 'end',
         'OK': 'OK',
         'Отмена': 'Cancel',
+        'рабочий день': 'working day',
+        'рабочих дня': 'working days',
         'рабочих дней': 'working days',
       },
       ru: {},
@@ -1338,6 +1340,16 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
     )
   }
 
+  const getNumEnding = (iNumber, aEndings) => {
+    if ((iNumber % 10 === 1 && iNumber % 100 !== 11)) {
+      return aEndings[0]
+    }
+    if (iNumber % 10 >= 2 && iNumber % 10 <= 4 && (iNumber % 100 < 10 || iNumber % 100 >= 20)) {
+      return aEndings[1]
+    }
+    return aEndings[2]
+  }
+
   const renderWorkingDays = () => (
     <View style={styles.workingDaysWrapper}>
       <View style={[styles.textWrapper, { minWidth: 70 }]}>
@@ -1350,9 +1362,11 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
           style={styles.text}
         />
       </View>
-      <Text style={[styles.text, { marginLeft: 15 }]}>
-        {Locale.getItem('рабочих дней')}
-      </Text>
+      <View style={{ width: 140 }}>
+        <Text style={[styles.text, { textAlign: 'left', marginLeft: 15 }]}>
+          {Locale.getItem(getNumEnding(workingDays, ['рабочий день', 'рабочих дня', 'рабочих дней']))}
+        </Text>
+      </View>
     </View>
   )
 
