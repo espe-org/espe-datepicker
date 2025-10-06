@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/Feather'
 import Modal from 'react-native-modal'
 import moment from 'moment'
 import React, { useEffect, useRef, useState } from 'react'
+import SegmentedControl from 'espe-datepicker/SegmentedControl'
 import { Picker } from 'react-native-wheel-pick'
 import {
   Text,
@@ -23,7 +24,6 @@ type Action = {
   text: string;
   mode: Mode;
   onPress?: (a?: any, b?: any) => void;
-  subText?: string;
 }
 
 interface IDatePickerProps {
@@ -44,7 +44,6 @@ interface IDatePickerProps {
   language?: 'ru' | 'en';
   isDarkMode?: boolean;
   mainColor?: string;
-  actionTitle?: string;
   actions?: Action[];
   selected?: number;
   workingDays?: number;
@@ -268,18 +267,11 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
 
     get actionsContainer() {
       return {
-        paddingVertical: 10,
-        paddingHorizontal: 16,
+        paddingTop: 4,
+        paddingBottom: 10,
+        paddingHorizontal: 8,
         borderTopWidth: 1,
         borderColor: AppConfig.borderColor,
-      }
-    },
-
-    get actionTitle() {
-      return {
-        color: AppConfig.grayColor,
-        fontFamily: 'TTNorms-Medium',
-        fontSize: 11,
       }
     },
 
@@ -307,14 +299,6 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
         color: AppConfig.plainColor,
         fontFamily: 'TTNorms-Medium',
         fontSize: 12,
-      }
-    },
-
-    get subText() {
-      return {
-        color: AppConfig.grayColor,
-        fontFamily: 'TTNorms-Medium',
-        fontSize: 10,
       }
     },
 
@@ -1371,43 +1355,27 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
     </View>
   )
 
-  const renderActions = () => {
-    if (!props.actionTitle || !props.actions) {
+  const renderSegmentedControl = () => {
+    if (!props.actions?.length) {
       return null
     }
 
     return (
       <View style={styles.actionsContainer}>
-        {props.actionTitle
-          ? <Text style={styles.actionTitle}>{props.actionTitle}</Text>
-          : null}
-        {props.actions.map((action, index) => (
-          <TouchableOpacity
-            key={action.text}
-            style={styles.actionWrapper}
-            onPress={() => {
-              if (selectedActionIndex === index) {
-                setSelectedActionIndex(-1)
-                setMode(props.mode || 'date')
-              } else {
-                setSelectedActionIndex(index)
-                setMode(action.mode)
-              }
-            }}
-          >
-            <View style={[styles.checkbox, selectedActionIndex === index && { backgroundColor: AppConfig.mainColor }]}>
-              {selectedActionIndex === index
-                ? <Icon name='check' size={16} color='white' />
-                : null}
-            </View>
-            <View style={{ justifyContent: action.subText ? 'space-between' : 'center' }}>
-              <Text style={styles.actionText}>{action.text}</Text>
-              {action.subText
-                ? <Text style={styles.subText}>{action.subText}</Text>
-                : null}
-            </View>
-          </TouchableOpacity>
-        ))}
+        <SegmentedControl
+          config={AppConfig}
+          values={props.actions}
+          selectedIndex={selectedActionIndex}
+          onTabPress={(action, index) => {
+            if (selectedActionIndex === index) {
+              setSelectedActionIndex(-1)
+              setMode(props.mode || 'date')
+            } else {
+              setSelectedActionIndex(index)
+              setMode(action.mode)
+            }
+          }}
+        />
       </View>
     )
   }
@@ -1501,7 +1469,7 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
 
         {mode === 'workingdays' ? renderWorkingDays() : null}
 
-        {renderActions()}
+        {renderSegmentedControl()}
 
         {renderButtons()}
       </View>
