@@ -158,7 +158,8 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
           - (AppConfig.isPad ? 85 : 30),
         margin: 10,
         marginBottom:
-          AppConfig.hasNotch || AppConfig.isPad || AppConfig.android ? 24 : 0,
+          AppConfig.android ? 100
+            : (AppConfig.hasNotch || AppConfig.isPad) ? 24 : 0,
       }
     },
 
