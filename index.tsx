@@ -121,6 +121,9 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
     get mainColor() {
       return props.mainColor || (this.dark ? '#87DC84' : '#049A00')
     },
+    get secondaryColor() {
+      return this.dark ? '#888888' : '#777777'
+    },
     get errorColor() {
       return this.dark ? '#E78080' : '#CC0000'
     },
@@ -325,7 +328,7 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = props =>
 
   const [selectedActionIndex, setSelectedActionIndex] = useState(props.selected ?? -1)
   const [mode, setMode] = useState(props.actions?.[selectedActionIndex]?.mode || props.mode || 'date')
-  const [workingDays, setWorkingDays] = useState(props.workingDays ?? 20)
+  const [workingDays, setWorkingDays] = useState(props.workingDays ?? 10)
   const minimumDate = props.minimumDate
     ? moment(props.minimumDate)
     : moment(AppConfig.date_limits.min)
