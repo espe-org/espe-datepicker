@@ -56,6 +56,6 @@
     "react-native-device-info": "14.0.4",
     "react-native-modal": "14.0.0-rc.1",
     "react-native-vector-icons": "10.2.0",
-    "react-native-wheel-pick": "github:TronNatthakorn/react-native-wheel-pick#3e73a5eee7ec5934e10599d04c31587b1ff36f31"
+    "react-native-wheel-pick": "1.2.6"
   }
 }
