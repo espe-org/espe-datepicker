@@ -958,7 +958,7 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = (
               }}
             >
               <Image
-                source={require("./chevron-left.png")}
+                source={require("./chevron-right.png")}
                 style={{
                   width: 24,
                   height: 24,
