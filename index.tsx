@@ -1076,6 +1076,7 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = (
   );
 
   const renderMonthYearPicker = () => {
+    const setDate = isEndTimePicker ? setEndDate : setStartDate;
     const months = getMonths();
     const years = getYears();
 
@@ -1089,6 +1090,14 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = (
           onValueChange={(month) => {
             currentDate.month(month);
             onChangeCalendar();
+            setDate(currentDate.clone());
+            if (
+              props.withEndDate &&
+              endDate &&
+              startDate.unix() > endDate.unix()
+            ) {
+              setEndDate(currentDate.clone());
+            }
           }}
         />
 
@@ -1101,6 +1110,14 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = (
           onValueChange={(year) => {
             currentDate.year(year);
             onChangeCalendar();
+            setDate(currentDate.clone());
+            if (
+              props.withEndDate &&
+              endDate &&
+              startDate.unix() > endDate.unix()
+            ) {
+              setEndDate(currentDate.clone());
+            }
           }}
         />
       </View>
