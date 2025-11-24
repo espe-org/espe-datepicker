@@ -1085,6 +1085,7 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = (
         <Picker
           style={{ flex: 1, backgroundColor: "transparent" }}
           textColor={AppConfig.plainColor}
+          itemStyle={{ color: AppConfig.plainColor }}
           selectedValue={currentDate.month()}
           pickerData={months}
           onValueChange={(month) => {
