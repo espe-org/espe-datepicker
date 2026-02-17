@@ -1373,7 +1373,7 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = (
             onChangeCalendar();
             onBlur();
           }}
-          style={[styles.text, { padding: 0 }]}
+          style={[styles.text, { padding: 0, flex: 1 }]}
         />
       </View>
     );
