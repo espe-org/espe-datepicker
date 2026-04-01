@@ -635,9 +635,9 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = (
   };
 
   const getDateTextColor = (date, index) => {
-    if (
-      !date ||
-      [startDate.format("DD.MM.YYYY"), endDate?.format("DD.MM.YYYY")].includes(
+    if (!date) {
+      return AppConfig.plainColor;
+    } else if (!firstСlickFirstDate && [startDate.format("DD.MM.YYYY"), endDate?.format("DD.MM.YYYY")].includes(
         date.format("DD.MM.YYYY"),
       )
     ) {
@@ -1038,7 +1038,7 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = (
                   styles.dateWrapper,
                   {
                     backgroundColor:
-                      date &&
+                      !firstСlickFirstDate && date &&
                         [
                           startDate.format("DD.MM.YYYY"),
                           endDate?.format("DD.MM.YYYY"),
@@ -1047,10 +1047,10 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = (
                         : null,
                     borderWidth:
                       !!date &&
-                        ([
+                        (!firstСlickFirstDate && ([
                           startDate.format("DD.MM.YYYY"),
                           endDate?.format("DD.MM.YYYY"),
-                        ].includes(date.format("DD.MM.YYYY")) ||
+                        ].includes(date.format("DD.MM.YYYY"))) ||
                           date.format("DD.MM.YYYY") ===
                           moment().format("DD.MM.YYYY"))
                         ? 2
