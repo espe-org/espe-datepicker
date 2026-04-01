@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2026.1.2](https://github.com/espe-org/espe-datepicker/compare/v0.9.7...v2026.1.2) (2026-04-01)
+
 ### [0.9.7](https://github.com/espe-org/espe-datepicker/compare/v0.9.6...v0.9.7) (2026-02-17)
 
 ### [0.9.6](https://github.com/espe-org/espe-datepicker/compare/v0.9.5...v0.9.6) (2026-02-17)
