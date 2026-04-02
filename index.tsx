@@ -1268,7 +1268,11 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = (
               }
             }}
             onBlur={onBlur}
-            style={[styles.text, isPicker && { fontSize: 19, width: 30 }]}
+            style={[
+              styles.text,
+              { width: 23 },
+              isPicker && { fontSize: 19, width: 30 },
+            ]}
           />
         </View>
 
@@ -1288,7 +1292,11 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = (
               }
             }}
             onBlur={onBlur}
-            style={[styles.text, isPicker && { fontSize: 19, width: 30 }]}
+            style={[
+              styles.text,
+              { width: 23 },
+              isPicker && { fontSize: 19, width: 30 },
+            ]}
           />
         </View>
       </View>
