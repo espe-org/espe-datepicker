@@ -1141,12 +1141,12 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = (
 
     if (date.format("DD.MM.YYYY") === minimumDate?.format("DD.MM.YYYY")) {
       minHour = minimumDate.hour();
-      minMinute = round(minimumDate.minutes(), minuteInterval, true);
+      minMinute = date.hour() > minHour ? 0 : round(minimumDate.minutes(), minuteInterval, true);
     }
 
     if (date.format("DD.MM.YYYY") === maximumDate?.format("DD.MM.YYYY")) {
       maxHour = maximumDate.hour();
-      maxMinute = maximumDate.minute();
+      maxMinute = date.hour() < maxHour ? 59 : round(maximumDate.minutes(), minuteInterval, true);
     }
 
     if (
