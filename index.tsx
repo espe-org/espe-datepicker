@@ -2,7 +2,7 @@ import ActionSheet from "espe-actionsheet";
 import SegmentedControl from "espe-datepicker/SegmentedControl";
 import moment from "moment";
 import type React from "react";
-import { useEffect, useRef, useState } from "react";
+import { type ComponentRef, useEffect, useRef, useState } from "react";
 import {
   Appearance,
   Dimensions,
@@ -375,12 +375,12 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = (
   const [isEndTimePicker, setIsEndTimePicker] = useState(false);
   const [startDateInput, setStartDateInput] = useState("");
   const [endDateInput, setEndDateInput] = useState("");
-  const startDateTimeTextInputRef = useRef<TextInput>(null);
-  const endDateTimeTextInputRef = useRef<TextInput>(null);
-  const startHourTimeTextInputRef = useRef<TextInput>(null);
-  const startMinuteTimeTextInputRef = useRef<TextInput>(null);
-  const endHourTimeTextInputRef = useRef<TextInput>(null);
-  const endMinuteTimeTextInputRef = useRef<TextInput>(null);
+  const startDateTimeTextInputRef = useRef<ComponentRef<typeof TextInput>>(null);
+  const endDateTimeTextInputRef = useRef<ComponentRef<typeof TextInput>>(null);
+  const startHourTimeTextInputRef = useRef<ComponentRef<typeof TextInput>>(null);
+  const startMinuteTimeTextInputRef = useRef<ComponentRef<typeof TextInput>>(null);
+  const endHourTimeTextInputRef = useRef<ComponentRef<typeof TextInput>>(null);
+  const endMinuteTimeTextInputRef = useRef<ComponentRef<typeof TextInput>>(null);
   const [firstСlickFirstDate, setFirstСlickFirstDate] = useState(
     !!props.withEndDate,
   );
