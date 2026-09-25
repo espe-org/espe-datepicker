@@ -5,8 +5,11 @@ custom DatePicker
 ## Installation
 
 ```sh
-npm install espe-datepicker
+npm install espe-datepicker espe-actionsheet moment react-native-device-info react-native-modal react-native-wheel-pick
 ```
+
+These are peer dependencies: the app must provide a single copy of each. A private copy of a
+native module, or of moment, which holds the registered locales, breaks the app at runtime.
 
 ## Usage
 
