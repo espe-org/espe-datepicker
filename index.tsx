@@ -33,6 +33,10 @@ interface IDatePickerProps {
   mode?: Mode;
   onConfirm: (date: Date, endDate?: Date) => void;
   onCancel?: () => void;
+  // Модалка закрыта нативно — после неё уже можно показывать Alert и другие
+  // модалки. onCancel (onModalHide) для этого рано: на iOS UIKit ещё закрывает
+  // модалку, и Alert поверх неё срывает закрытие
+  onHidden?: () => void;
   children?: (showPicker: (e?: any) => void) => React.ReactElement;
   isVisible?: boolean;
   minimumDate?: Date;
@@ -1664,6 +1668,14 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
     }
   };
 
+  // onDismiss есть только на iOS, на остальных платформах хватает onModalHide
+  const onModalHide = () => {
+    onCancel();
+    if (Platform.OS !== "ios") {
+      props.onHidden?.();
+    }
+  };
+
   return (
     <>
       {props.children ? props.children(showPicker) : null}
@@ -1674,7 +1686,8 @@ const DatePicker: React.FunctionComponent<IDatePickerProps> = (props) => {
         useNativeDriver
         onBackButtonPress={onCancel}
         onBackdropPress={onCancel}
-        onModalHide={onCancel}
+        onModalHide={onModalHide}
+        onDismiss={props.onHidden}
         style={{ flex: 1, margin: 0 }}
       >
         <DatePickerModal
