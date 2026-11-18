@@ -117,7 +117,11 @@ const DatePickerModal: React.FunctionComponent<IDatePickerModalProps> = (
     get isPad() {
       return this.windowWidth > 767 || this.mac;
     },
-    hasNotch: DeviceInfo.hasNotch(),
+    // Незнакомый библиотеке iPhone (getModel() отдаёт голое "iPhone") новее её
+    // списка, а все iPhone после SE 3 (2022) с чёлкой или Dynamic Island.
+    hasNotch:
+      DeviceInfo.hasNotch() ||
+      (Platform.OS === "ios" && DeviceInfo.getModel() === "iPhone"),
     windowWidth: Dimensions.get("window").width,
     windowHeight: Dimensions.get("window").height,
     dark: props.isDarkMode ?? Appearance.getColorScheme() === "dark",
